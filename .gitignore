@@ -1,0 +1,18 @@
+# Dependencias y salida
+node_modules/
+_site/
+renders/
+!decks/_plantilla/renders/
+
+# Configuración personal y secretos
+.env*
+*.local.*
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/*.local.json
+.vscode/
+.idea/
+*.log
+Thumbs.db
+desktop.ini
+.DS_Store

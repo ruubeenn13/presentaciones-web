@@ -1,0 +1,82 @@
+<!doctype html>
+<!--
+  Deck de muestra para la captura del README. No se publica en Pages.
+  Paleta: verde botella #143D33 (dominante) · papel #EEF2EA (texto) · salvia #9DB5A5 (apoyo) · mostaza #E8B53A (acento único)
+  Tipografías: Fraunces (titulares) · IBM Plex Mono (pasos). Motivo: el paso activo en mostaza.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo se hace un deck</title>
+<style>
+  @font-face { font-family: 'Fraunces'; font-weight: 400; src: url('assets/fonts/fraunces-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Fraunces'; font-weight: 900; src: url('assets/fonts/fraunces-latin-900-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Plex Mono'; font-weight: 400; src: url('assets/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+
+  :root { --botella: #143D33; --papel: #EEF2EA; --salvia: #9DB5A5; --mostaza: #E8B53A; }
+  html, body { margin: 0; height: 100%; background: var(--botella); overflow: hidden; }
+  #deckStage { position: absolute; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  .slide {
+    position: absolute; inset: 0; box-sizing: border-box; padding: 150px 160px;
+    background: var(--botella); color: var(--papel); font-family: 'Fraunces', Georgia, serif;
+    visibility: hidden; opacity: 0; transition: opacity 0.4s ease;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .slide.active { visibility: visible; opacity: 1; }
+
+  h1 { font-weight: 900; font-size: 168px; line-height: 0.95; letter-spacing: -0.02em; margin: 0; max-width: 12ch; }
+  h1 em { font-style: normal; color: var(--mostaza); }
+  .lead { font-size: 52px; color: var(--salvia); margin: 0; max-width: 28ch; line-height: 1.25; }
+
+  h2 { font-weight: 900; font-size: 120px; line-height: 1; letter-spacing: -0.02em; margin: 0; max-width: 14ch; }
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; gap: 64px; align-items: flex-end; }
+  .steps li { display: flex; flex-direction: column; gap: 14px; font-size: 52px; color: var(--salvia); }
+  .steps small { font-family: 'Plex Mono', monospace; font-size: 48px; }
+  .steps .now { color: var(--mostaza); font-weight: 900; font-size: 76px; }
+  .steps .now small { font-weight: 400; }
+</style>
+</head>
+<body>
+<div id="deckStage">
+  <section class="slide active">
+    <h1>Primero el guion. <em>Después</em>, el diseño.</h1>
+    <p class="lead">Cada diapositiva afirma una sola idea que se entiende en tres segundos.</p>
+    <!-- Nota: el diseño sirve a una frase; si la frase no está clara, ningún estilo la salva. -->
+  </section>
+
+  <section class="slide">
+    <h2>El guion se aprueba antes de elegir estilo.</h2>
+    <ol class="steps">
+      <li><small>1</small>Brief</li>
+      <li class="now"><small>2</small>Guion</li>
+      <li><small>3</small>Estilo</li>
+      <li><small>4</small>Construir</li>
+      <li><small>5</small>Render</li>
+      <li><small>6</small>Crítico</li>
+      <li><small>7</small>PDF</li>
+    </ol>
+    <!-- Nota: siete pasos en orden; el segundo es el que más se salta y el que más cuesta luego. -->
+  </section>
+</div>
+<script>
+  const stage = document.getElementById('deckStage');
+  const slides = [...document.querySelectorAll('.slide')];
+  let current = 0;
+  const fit = () => {
+    const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+    stage.style.transform = `translate(${(innerWidth - 1920 * k) / 2}px, ${(innerHeight - 1080 * k) / 2}px) scale(${k})`;
+  };
+  const show = (i) => {
+    current = Math.max(0, Math.min(i, slides.length - 1));
+    slides.forEach((s, n) => s.classList.toggle('active', n === current));
+  };
+  addEventListener('resize', fit);
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(current + 1);
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) show(current - 1);
+  });
+  fit();
+</script>
+</body>
+</html>

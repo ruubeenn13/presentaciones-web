@@ -1,0 +1,113 @@
+/* Índice de GitHub Pages.
+   Paleta: niebla #E9EDF0 (fondo dominante) · tinta #12263A (texto y marcos)
+           pizarra #4E5D6C (texto secundario) · blanco #FFFFFF (interior del marco)
+           rojo señal #C8102E (único acento: foco del teclado y fecha del deck más reciente)
+   Tipografías: Fraunces (titulares, contraste fuerte de peso) · IBM Plex Mono (fechas y datos).
+   Motivo: el marco 16:9 de una diapositiva; cada deck es uno. */
+
+@font-face { font-family: 'Fraunces'; font-weight: 400; font-display: swap; src: url('fonts/fraunces-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-weight: 600; font-display: swap; src: url('fonts/fraunces-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Fraunces'; font-weight: 900; font-display: swap; src: url('fonts/fraunces-latin-900-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Plex Mono'; font-weight: 400; font-display: swap; src: url('fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
+
+:root {
+  --niebla: #E9EDF0;
+  --tinta: #12263A;
+  --pizarra: #4E5D6C;
+  --blanco: #FFFFFF;
+  --senal: #C8102E;
+  --serif: 'Fraunces', Georgia, serif;
+  --mono: 'Plex Mono', ui-monospace, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--niebla);
+  color: var(--tinta);
+  font: 400 1.125rem/1.55 var(--serif);
+  padding: clamp(2rem, 6vw, 6rem) clamp(1rem, 5vw, 5rem);
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.intro h1 {
+  font-weight: 900;
+  font-size: clamp(2.6rem, 7.5vw, 6.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.5rem;
+  max-width: 14ch;
+}
+
+.intro p {
+  color: var(--pizarra);
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  max-width: 38ch;
+  margin: 0 0 clamp(3rem, 7vw, 6rem);
+}
+
+.count { font-family: var(--mono); font-size: 0.85em; white-space: nowrap; }
+
+.decks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+/* El deck más reciente ocupa toda la fila: es lo único que destaca. */
+.decks li:first-child { grid-column: 1 / -1; }
+@media (min-width: 48rem) { .decks li:first-child a { aspect-ratio: 16 / 7; } }
+.decks li:first-child .title { font-size: clamp(2rem, 5vw, 4.25rem); max-width: 18ch; }
+.decks li:first-child time { color: var(--senal); }
+
+.decks a {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  background: var(--blanco);
+  border: 2px solid var(--tinta);
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.decks a:hover { background: var(--tinta); color: var(--niebla); }
+.decks a:hover time, .decks a:hover .pdf { color: var(--niebla); }
+.decks a:focus-visible { outline: 4px solid var(--senal); outline-offset: 4px; }
+
+.title {
+  font-weight: 600;
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+
+.meta { display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: 0.95rem; }
+time, .pdf { color: var(--pizarra); }
+
+.empty {
+  aspect-ratio: 16 / 9;
+  grid-column: 1 / -1;
+  max-width: 40rem;
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--pizarra);
+  color: var(--pizarra);
+  font-size: 1.35rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+footer { margin-top: clamp(3rem, 7vw, 6rem); font-family: var(--mono); font-size: 0.95rem; }
+footer a { color: var(--tinta); text-underline-offset: 0.25em; }
+footer a:focus-visible { outline: 3px solid var(--senal); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) { .decks a { transition: none; } }

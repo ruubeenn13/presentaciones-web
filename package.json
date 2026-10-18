@@ -1,0 +1,17 @@
+{
+  "name": "presentaciones-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "nuevo-deck": "node scripts/nuevo-deck.mjs",
+    "render": "node scripts/render.mjs",
+    "pdf": "node scripts/pdf.mjs",
+    "build-site": "node scripts/build-site.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}
