@@ -30,7 +30,12 @@ nunca es decorativo.
 
 ## Movimiento
 - Una sola transición: fundido de 300 ms con cubic-bezier(.2,0,0,1).
-- Un solo momento destacado, en la diapositiva 2. Al activarse, el tramo Niebla aparece en 300 ms; después,
-  el tramo Naranja barre el anillo en 1.200 ms con 1 − (1 − t)³ mientras «645» cuenta de 0 a 645
-  (momento 7 de la app, «Cifras que cuentan»). Se repite cada vez que se entra en la diapositiva.
-- Nada más se anima. El HTML lleva el estado final; con prefers-reduced-motion se muestra directo.
+- Lo que mide algo se construye al entrar, con 1 − (1 − t)³, y se repite cada vez que se entra:
+  - Portada y cierre: la G se descubre con un barrido desde las 12 (1.100 ms).
+  - 2 (momento fuerte, «Cifras que cuentan»): el tramo Niebla aparece en 300 ms; después el Naranja barre en 1.200 ms mientras «645» cuenta de 0 a 645.
+  - 3: los cinco tramos se completan uno tras otro, como las cinco preguntas.
+  - 4: el anillo de la API se cierra y luego se trazan los conectores (app, base de datos, panel).
+  - 5: se apuntan las dos series del primer arco; al volver, el tercero se restaura de golpe.
+  - 6, 7 y 8: las cifras cuentan desde 0 (198.000, 403, 1.100, 26, 49); en la 7 el conector crece antes del 403 y en la 8 el anillo se cierra con la cuenta.
+- El texto no se anima. Las cifras reservan su ancho final para no mover nada mientras cuentan.
+- El HTML lleva el estado final; con prefers-reduced-motion se muestra directo, sin animar.

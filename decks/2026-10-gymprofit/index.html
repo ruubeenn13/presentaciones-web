@@ -132,7 +132,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 /* === 7. 403 === */
 .prohibido .cuerpo { display: flex; align-items: center; gap: 48px; }
 .prohibido .peticion { max-width: 9em; flex: none; }
-.prohibido .linea { flex: 1; height: 4px; background: var(--niebla); }
+.prohibido .linea { flex: 1; height: 4px; background: var(--niebla); transform-origin: left center; }
 .prohibido .respuesta { flex: none; }
 .prohibido .cifra { font-size: 380px; line-height: .8; color: var(--naranja); }
 .prohibido .respuesta .t66 { margin-top: 28px; }
@@ -159,7 +159,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <h1 class="nombre">GymProFit</h1>
     <p class="sub">Un proyecto de clase llevado como un producto de verdad</p>
     <p class="autor">Rubén Juan Candela</p>
-    <img class="g" src="assets/logo-g.svg" alt="">
+    <img class="g" src="assets/logo-g.svg" alt="" data-anim="g" data-delay="150" data-dur="1100">
   </section>
 
   <!-- 2 · Commits: el único momento animado -->
@@ -171,13 +171,13 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
       <svg class="arco" width="600" height="600" viewBox="0 0 100 100" aria-hidden="true">
         <g transform="rotate(-90 50 50)">
           <circle class="pista" cx="50" cy="50" r="41.5"/>
-          <circle class="niebla-t" id="tramoTfg" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="49.02 360" stroke-dashoffset="0"/>
-          <circle class="naranja-t" id="tramoDespues" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="306.98 360" stroke-dashoffset="-51.02"/>
+          <circle class="niebla-t" id="tramoTfg" data-anim="aparece" data-dur="300" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="49.02 360" stroke-dashoffset="0"/>
+          <circle class="naranja-t" id="tramoDespues" data-anim="barre" data-delay="300" data-dur="1200" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="306.98 360" stroke-dashoffset="-51.02"/>
         </g>
       </svg>
       <div class="columna">
         <p class="fila"><span class="cifra niebla">103</span><span class="t60 niebla">durante el TFG</span></p>
-        <p class="fila"><span class="cifra naranja" id="cuenta645">645</span><span class="t60 hueso">después</span></p>
+        <p class="fila"><span class="cifra naranja" id="cuenta645" data-anim="cuenta" data-delay="300" data-dur="1200">645</span><span class="t60 hueso">después</span></p>
       </div>
     </div>
   </section>
@@ -201,11 +201,11 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
         <svg class="arco" width="560" height="560" viewBox="0 0 100 100" aria-hidden="true">
           <g transform="rotate(-90 50 50)">
             <circle class="pista" cx="50" cy="50" r="41.5"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="0"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-72"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-144"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-216"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-288"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="0" data-anim="barre" data-delay="150" data-dur="260"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-72" data-anim="barre" data-delay="390" data-dur="260"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-144" data-anim="barre" data-delay="630" data-dur="260"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-216" data-anim="barre" data-delay="870" data-dur="260"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-288" data-anim="barre" data-delay="1110" data-dur="260"/>
           </g>
         </svg>
         <div class="dentro"><span class="cifra hueso">Tu plan</span></div>
@@ -218,13 +218,13 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <!-- NOTA: Lo que habéis visto es solo una de las cuatro piezas. La app habla con una API en api.gymprofit.app, que guarda los datos en una base de datos MySQL. Hay un panel para gestionar el catálogo y los usuarios, y una web con la privacidad y los términos. En el TFG todo vivía en dos servidores EC2 de AWS; hoy la API está en Render, la base de datos en Aiven y el panel y la web en Cloudflare. La API cabe en 512 MB: cuando empezó a caerse por memoria, medí cada parte y el pico bajó de 501 a 438 MB. (50 s) -->
     <h2 class="titular">Detrás del móvil hay cuatro piezas en producción</h2>
     <svg class="conectores" viewBox="0 0 1920 1080" aria-hidden="true">
-      <line x1="495" y1="550" x2="730" y2="550"/>
-      <line x1="900" y1="800" x2="900" y2="868"/>
-      <line x1="1035" y1="456" x2="1115" y2="456"/>
+      <line x1="495" y1="550" x2="730" y2="550" pathLength="100" stroke-dasharray="101 100" data-anim="traza" data-delay="800" data-dur="400"/>
+      <line x1="900" y1="800" x2="900" y2="868" pathLength="100" stroke-dasharray="101 100" data-anim="traza" data-delay="950" data-dur="400"/>
+      <line x1="1035" y1="456" x2="1115" y2="456" pathLength="100" stroke-dasharray="101 100" data-anim="traza" data-delay="1100" data-dur="400"/>
     </svg>
     <div class="anillo" style="position:absolute;left:750px;top:400px;width:300px;height:300px">
       <svg class="arco" width="300" height="300" viewBox="0 0 100 100" aria-hidden="true">
-        <circle class="naranja-t" cx="50" cy="50" r="41.5"/>
+        <circle class="naranja-t" cx="50" cy="50" r="41.5" transform="rotate(-90 50 50)" pathLength="360" stroke-dasharray="361 360" data-anim="barre" data-delay="150" data-dur="800"/>
       </svg>
       <div class="dentro"><span class="api-txt">API</span></div>
     </div>
@@ -245,8 +245,8 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
         <svg class="arco" width="340" height="340" viewBox="0 0 100 100" aria-hidden="true">
           <g transform="rotate(-90 50 50)">
             <circle class="pista" cx="50" cy="50" r="41.5"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="0"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="-120"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="0" data-anim="barre" data-delay="150" data-dur="450"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="-120" data-anim="barre" data-delay="650" data-dur="450"/>
           </g>
         </svg>
         <figcaption class="hueso">Serie 2 apuntada</figcaption>
@@ -261,8 +261,8 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
         <svg class="arco" width="340" height="340" viewBox="0 0 100 100" aria-hidden="true">
           <g transform="rotate(-90 50 50)">
             <circle class="pista" cx="50" cy="50" r="41.5"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="0"/>
-            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="-120"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="0" data-anim="barre" data-delay="1400" data-dur="500"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="-120" data-anim="barre" data-delay="1400" data-dur="500"/>
           </g>
         </svg>
         <figcaption class="hueso">Al volver, sigue ahí</figcaption>
@@ -275,7 +275,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <!-- NOTA: Al principio, cada letra que escribías se consultaba a Open Food Facts, una base de datos abierta. Solo deja 10 búsquedas por minuto por dirección, y todos los usuarios salían por la misma: con pocos a la vez, la búsqueda se caía para todos. Ahora la API tiene su propio índice en memoria con 198.000 productos de España y cientos de alimentos básicos. En las pruebas en local responde en 24 milisegundos, y se actualiza sola cada semana. (55 s) -->
     <h2 class="titular">Buscar un alimento ya no depende de nadie</h2>
     <div class="cuerpo">
-      <p class="cifra grande">198.000</p>
+      <p class="cifra grande" data-anim="cuenta" data-delay="150" data-dur="1400">198.000</p>
       <p class="t66 hueso">productos en un índice propio</p>
       <p class="t60 niebla fuentes">Open Food Facts, Ciqual y USDA</p>
     </div>
@@ -287,9 +287,9 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <h2 class="titular">Nadie ve los datos de otro, y un test lo comprueba en cada ruta</h2>
     <div class="cuerpo">
       <p class="t66 hueso peticion">Pedir la sesión de otro usuario</p>
-      <span class="linea" aria-hidden="true"></span>
+      <span class="linea" aria-hidden="true" data-anim="crece" data-delay="150" data-dur="500"></span>
       <div class="respuesta">
-        <p class="cifra">403</p>
+        <p class="cifra" data-anim="cuenta" data-delay="650" data-dur="700">403</p>
         <p class="t66 hueso">Prohibido</p>
       </div>
     </div>
@@ -303,17 +303,17 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <div class="cuerpo">
       <div class="anillo" style="width:600px;height:600px">
         <svg class="arco" width="600" height="600" viewBox="0 0 100 100" aria-hidden="true">
-          <circle class="naranja-t" cx="50" cy="50" r="41.5"/>
+          <circle class="naranja-t" cx="50" cy="50" r="41.5" transform="rotate(-90 50 50)" pathLength="360" stroke-dasharray="361 360" data-anim="barre" data-delay="150" data-dur="1100"/>
         </svg>
         <div class="dentro">
           <span class="t60 niebla">más de</span>
-          <span class="cifra">1.100</span>
+          <span class="cifra" data-anim="cuenta" data-delay="150" data-dur="1100">1.100</span>
           <span class="t60 niebla">tests</span>
         </div>
       </div>
       <div class="columna">
-        <p class="fila"><span class="cifra hueso">26</span><span class="t60 niebla">versiones</span></p>
-        <p class="fila"><span class="cifra hueso">49</span><span class="t60 niebla">decisiones escritas</span></p>
+        <p class="fila"><span class="cifra hueso" data-anim="cuenta" data-delay="450" data-dur="900">26</span><span class="t60 niebla">versiones</span></p>
+        <p class="fila"><span class="cifra hueso" data-anim="cuenta" data-delay="450" data-dur="900">49</span><span class="t60 niebla">decisiones escritas</span></p>
       </div>
     </div>
   </section>
@@ -323,7 +323,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     <!-- NOTA: Empezó como un TFG y hoy funciona en producción, con un grupo de gente probándola. Si os quedáis con una frase, que sea la segunda decisión que escribí para el proyecto: simple por fuera, potente por dentro. Gracias. (30 s) -->
     <p class="recap">Empezó como un TFG y hoy funciona en producción</p>
     <h2 class="frase">Simple por fuera,<br>potente por dentro</h2>
-    <img class="g" src="assets/logo-g.svg" alt="">
+    <img class="g" src="assets/logo-g.svg" alt="" data-anim="g" data-delay="150" data-dur="1100">
   </section>
 
 </main>
@@ -379,36 +379,60 @@ class SlidePresentation {
       s.classList.toggle('active', n === this.current);
       s.classList.toggle('visible', n === this.current);
     });
-    if (this.slides[this.current].id === 's-commits' && (prev !== this.current || !this.started)) cifrasQueCuentan();
+    if (prev !== this.current || !this.started) animarEntrada(this.slides[this.current]);
     this.started = true;
   }
 }
 
-/* === MOMENTO ÚNICO: «Cifras que cuentan» (diapositiva 2) ===
-   Niebla aparece en 300 ms; luego Naranja barre 306,98° en 1.200 ms con 1 − (1 − t)³ y «645» cuenta a la par.
-   El HTML ya lleva el estado final; con reduced motion no se toca nada. */
-let rafCommits = 0;
-function cifrasQueCuentan() {
+/* === MOVIMIENTO: lo que mide algo se construye al entrar ===
+   Cada [data-anim] parte de cero y llega a su estado final (el que ya trae el HTML) con 1 − (1 − t)³.
+   - barre: un tramo de arco crece desde su inicio hasta su largo final.
+   - cuenta: la cifra cuenta de 0 a su valor, con punto de miles si lo lleva.
+   - traza / crece: un conector se dibuja desde su origen.
+   - aparece: fundido (tramo del TFG en la diapositiva 2).
+   - g: la G se descubre con un barrido desde las 12, como el arco.
+   La diapositiva 2 sigue siendo el momento fuerte. Se repite al volver a entrar; con reduced motion no se anima. */
+const ease = (t) => 1 - Math.pow(1 - t, 3);
+const conPuntos = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const animaciones = new WeakMap();
+
+function pintar(el, p) {
+  const tipo = el.dataset.anim;
+  if (tipo === 'barre' || tipo === 'traza') {
+    const [largo, resto] = el.dataset.final.split(' ').map(Number);
+    el.setAttribute('stroke-dasharray', `${(largo * p).toFixed(2)} ${resto}`);
+  } else if (tipo === 'cuenta') {
+    const n = Math.round(Number(el.dataset.final.replace(/\./g, '')) * p);
+    el.textContent = el.dataset.final.includes('.') ? conPuntos(n) : String(n);
+  } else if (tipo === 'crece') {
+    el.style.transform = p >= 1 ? '' : `scaleX(${p})`;
+  } else if (tipo === 'aparece') {
+    el.style.opacity = p >= 1 ? '' : String(p);
+  } else if (tipo === 'g') {
+    const a = (p * 360).toFixed(1);
+    el.style.webkitMaskImage = el.style.maskImage = p >= 1 ? '' : `conic-gradient(#000 ${a}deg, transparent ${a}deg)`;
+  }
+}
+
+function animarEntrada(slide) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const tfg = document.getElementById('tramoTfg');
-  const despues = document.getElementById('tramoDespues');
-  const cuenta = document.getElementById('cuenta645');
-  const LARGO = 306.98, FIN = 645, FUNDIDO = 300, BARRIDO = 1200;
-  const ease = (t) => 1 - Math.pow(1 - t, 3);
-  cancelAnimationFrame(rafCommits);
-  tfg.style.opacity = '0';
-  despues.setAttribute('stroke-dasharray', '0 360');
-  cuenta.textContent = '0';
-  const t0 = performance.now();
-  const frame = (now) => {
-    const t = Math.max(0, now - t0);
-    tfg.style.opacity = String(Math.min(1, ease(Math.min(1, t / FUNDIDO))));
-    const p = ease(Math.min(1, Math.max(0, (t - FUNDIDO) / BARRIDO)));
-    despues.setAttribute('stroke-dasharray', `${(LARGO * p).toFixed(2)} 360`);
-    cuenta.textContent = String(Math.round(FIN * p));
-    if (t < FUNDIDO + BARRIDO) rafCommits = requestAnimationFrame(frame);
-  };
-  rafCommits = requestAnimationFrame(frame);
+  slide.querySelectorAll('[data-anim]').forEach((el) => {
+    if (!el.dataset.final) {
+      el.dataset.final = el.dataset.anim === 'cuenta' ? el.textContent.trim() : (el.getAttribute('stroke-dasharray') || '1');
+    }
+    // La cifra reserva su ancho final para que contar no empuje lo que tiene al lado
+    if (el.dataset.anim === 'cuenta' && !el.style.minWidth) el.style.minWidth = `${el.offsetWidth}px`;
+    cancelAnimationFrame(animaciones.get(el));
+    const delay = Number(el.dataset.delay || 0), dur = Number(el.dataset.dur || 1000);
+    pintar(el, 0);
+    const t0 = performance.now();
+    const frame = (now) => {
+      const p = ease(Math.min(1, Math.max(0, (now - t0 - delay) / dur)));
+      pintar(el, p);
+      if (p < 1) animaciones.set(el, requestAnimationFrame(frame));
+    };
+    animaciones.set(el, requestAnimationFrame(frame));
+  });
 }
 
 new SlidePresentation();
