@@ -1,0 +1,417 @@
+<!doctype html>
+<!--
+  GymProFit — presentación de un solo archivo, construida con la mecánica de frontend-slides.
+  - Cada diapositiva: <section class="slide">; la visible lleva .active.
+  - Lienzo de 1920x1080 escalado; ningún texto por debajo de 60 px.
+  - Fuentes con @font-face desde assets/fonts/; logo en assets/logo-g.svg. Nada depende de internet.
+  - Notas del orador como comentarios HTML dentro de cada .slide.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GymProFit</title>
+<style>
+/* === FUENTES (locales) === */
+@font-face { font-family: 'Barlow'; font-weight: 500; font-display: block; src: url('assets/fonts/barlow-500.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 600; font-display: block; src: url('assets/fonts/barlow-600.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-weight: 700; font-display: block; src: url('assets/fonts/barlow-condensed-700.woff2') format('woff2'); }
+
+/* === TEMA (design.md) === */
+:root {
+  --grafito: #0B0C0E;
+  --superficie: #1B1E24;
+  --hueso: #F2F2F3;
+  --niebla: #A1A9B6;
+  --naranja: #FF6A00;
+  --dorado: #ECBB3D;
+  --stage-bg: var(--grafito);
+  --slide-bg: var(--grafito);
+  --display: 'Barlow Condensed', sans-serif;
+  --texto: 'Barlow', sans-serif;
+  --curva: cubic-bezier(.2, 0, 0, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* === ESCENARIO FIJO 16:9 (viewport-base.css de frontend-slides) === */
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+.deck-stage {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+  overflow: hidden; transform-origin: 0 0; background: var(--slide-bg, #fff);
+}
+.slide {
+  position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;
+  display: block; visibility: hidden; opacity: 0; pointer-events: none;
+  background: var(--slide-bg, #fff);
+}
+.slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+@media print {
+  html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+  .deck-viewport { position: static; overflow: visible; background: #fff; }
+  .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+  .slide {
+    position: relative; display: block !important; visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+}
+
+/* === TRANSICIÓN ÚNICA: fundido de 300 ms === */
+.slide { transition: opacity 300ms var(--curva), visibility 0s linear 300ms; }
+.slide.active { transition: opacity 300ms var(--curva), visibility 0s; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* === SISTEMA === */
+.slide { color: var(--hueso); font-family: var(--texto); font-weight: 500; }
+.titular {
+  position: absolute; top: 110px; left: 150px; max-width: 1560px;
+  font: 700 96px/1.02 var(--display); color: var(--hueso); text-wrap: balance;
+}
+.cuerpo { position: absolute; top: 350px; left: 150px; right: 150px; bottom: 110px; }
+.cifra { font-family: var(--display); font-weight: 700; line-height: .86; font-variant-numeric: tabular-nums; }
+.niebla { color: var(--niebla); }
+.naranja { color: var(--naranja); }
+.hueso { color: var(--hueso); }
+.t60 { font-size: 60px; line-height: 1.15; }
+.t66 { font-size: 66px; line-height: 1.15; }
+
+/* El arco de la G: anillo con grosor = 17 % del diámetro, empieza a las 12 y gira en sentido horario */
+.arco { display: block; flex: none; overflow: visible; }
+.arco circle { fill: none; stroke-width: 17; }
+.arco .pista { stroke: var(--superficie); }
+.arco .naranja-t { stroke: var(--naranja); }
+.arco .niebla-t { stroke: var(--niebla); }
+.anillo { position: relative; flex: none; }
+.anillo > .dentro {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+}
+
+/* === 1. PORTADA === */
+.portada .nombre {
+  position: absolute; left: 150px; top: 250px;
+  font: 700 244px/.86 var(--display); letter-spacing: -.012em; color: var(--hueso);
+}
+.portada .sub { position: absolute; left: 150px; top: 504px; max-width: 13em; font-size: 66px; line-height: 1.15; color: var(--niebla); }
+.portada .autor { position: absolute; left: 150px; bottom: 110px; font-size: 60px; line-height: 1.15; color: var(--niebla); }
+.portada .g { position: absolute; right: 96px; top: 150px; width: 780px; }
+
+/* === 2. COMMITS === */
+.commits .cuerpo { display: flex; align-items: center; gap: 140px; }
+.commits .columna { display: flex; flex-direction: column; gap: 56px; }
+.fila { display: flex; align-items: baseline; gap: 36px; }
+.commits .cifra { font-size: 200px; }
+
+/* === 3. CINCO PREGUNTAS === */
+.preguntas .cuerpo { display: flex; align-items: center; justify-content: space-between; }
+.preguntas ul { list-style: none; font: 600 64px/1.3 var(--texto); color: var(--hueso); }
+.preguntas .dentro .cifra { font-size: 110px; line-height: 1; }
+
+/* === 4. PIEZAS (esquema) === */
+.piezas .nodo { position: absolute; font: 700 72px/1 var(--display); color: var(--hueso); }
+.piezas .nodo small { display: block; margin-top: 10px; font: 500 60px/1.1 var(--texto); color: var(--niebla); }
+.piezas .api-txt { font: 700 96px/1 var(--display); }
+.piezas .conectores { position: absolute; inset: 0; width: 1920px; height: 1080px; max-width: none; max-height: none; }
+.piezas .conectores line { stroke: var(--niebla); stroke-width: 4; }
+
+/* === 5. SIN PÉRDIDAS === */
+.series .cuerpo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; align-content: center; }
+.series figure { display: flex; flex-direction: column; gap: 44px; }
+.series figcaption { font-size: 60px; line-height: 1.15; }
+
+/* === 6. ÍNDICE PROPIO === */
+.indice .grande { font-size: 420px; line-height: .8; color: var(--naranja); margin-left: -12px; }
+.indice .t66 { margin-top: 40px; }
+.indice .fuentes { position: absolute; left: 0; bottom: 0; }
+
+/* === 7. 403 === */
+.prohibido .cuerpo { display: flex; align-items: center; gap: 48px; }
+.prohibido .peticion { max-width: 9em; flex: none; }
+.prohibido .linea { flex: 1; height: 4px; background: var(--niebla); }
+.prohibido .respuesta { flex: none; }
+.prohibido .cifra { font-size: 380px; line-height: .8; color: var(--naranja); }
+.prohibido .respuesta .t66 { margin-top: 28px; }
+
+/* === 8. TESTS === */
+.tests .cuerpo { display: flex; align-items: center; gap: 160px; }
+.tests .dentro .cifra { font-size: 160px; line-height: .95; color: var(--hueso); }
+.tests .columna { display: flex; flex-direction: column; gap: 72px; }
+.tests .columna .cifra { font-size: 180px; }
+
+/* === 9. CIERRE === */
+.cierre .recap { position: absolute; left: 150px; top: 300px; max-width: 1040px; font-size: 66px; line-height: 1.15; color: var(--niebla); }
+.cierre .frase { position: absolute; left: 150px; top: 520px; font: 700 150px/.95 var(--display); color: var(--hueso); }
+.cierre .g { position: absolute; right: 96px; top: 50%; width: 520px; transform: translateY(-50%); }
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+  <!-- 1 · Portada -->
+  <section class="slide portada active" aria-label="GymProFit: un proyecto de clase llevado como un producto de verdad">
+    <!-- NOTA: Hola, soy Rubén. Os voy a enseñar GymProFit, una app para entrenar, comer bien y ver tu progreso. Empezó como mi TFG de DAM y la he seguido llevando como un producto de verdad. Primero la veréis funcionar y luego os cuento lo que no se ve. (15 s) -->
+    <h1 class="nombre">GymProFit</h1>
+    <p class="sub">Un proyecto de clase llevado como un producto de verdad</p>
+    <p class="autor">Rubén Juan Candela</p>
+    <img class="g" src="assets/logo-g.svg" alt="">
+  </section>
+
+  <!-- 2 · Commits: el único momento animado -->
+  <section class="slide commits" id="s-commits">
+    <!-- NOTA: Un commit es un cambio guardado en el código. De febrero a mayo, mientras hacía el TFG, hice 103. Lo entregué y, de julio a mediados de octubre, 645: seis veces más, y eso que junio y agosto están en blanco. Lo normal es que un trabajo de clase acabe con la nota. Este no acabó. (55 s) -->
+    <h2 class="titular">Tras entregar el TFG, hice seis veces más commits que mientras lo hacía</h2>
+    <div class="cuerpo">
+      <!-- 356° repartidos en proporción 103/748 y 645/748, con 2° de hueco en cada unión -->
+      <svg class="arco" width="600" height="600" viewBox="0 0 100 100" aria-hidden="true">
+        <g transform="rotate(-90 50 50)">
+          <circle class="pista" cx="50" cy="50" r="41.5"/>
+          <circle class="niebla-t" id="tramoTfg" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="49.02 360" stroke-dashoffset="0"/>
+          <circle class="naranja-t" id="tramoDespues" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="306.98 360" stroke-dashoffset="-51.02"/>
+        </g>
+      </svg>
+      <div class="columna">
+        <p class="fila"><span class="cifra niebla">103</span><span class="t60 niebla">durante el TFG</span></p>
+        <p class="fila"><span class="cifra naranja" id="cuenta645">645</span><span class="t60 hueso">después</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · Cinco preguntas (y demo) -->
+  <section class="slide preguntas">
+    <!-- NOTA: La app empieza con cinco preguntas: tu objetivo, tu nivel, tu cuerpo, dónde entrenas y cuántos días. Con eso te da un programa de entreno y tus calorías y macros del día. Mejor que contarlo, os lo enseño.
+         DEMO de 3 min con una cuenta de prueba nueva: el alta y el plan (1 min); empezar la sesión, apuntar una serie y ver el descanso (1 min); buscar o escanear un producto y añadirlo con el «+» (1 min).
+         Plan B si falla la red: vuelve a las diapositivas y cuéntalo. Refleja el móvil con scrcpy por USB, que no depende del wifi. (220 s) -->
+    <h2 class="titular">Cinco preguntas y tienes tu programa y tus calorías del día</h2>
+    <div class="cuerpo">
+      <ul>
+        <li>Objetivo</li>
+        <li>Nivel</li>
+        <li>Tu cuerpo</li>
+        <li>Dónde entrenas</li>
+        <li>Días</li>
+      </ul>
+      <div class="anillo" style="width:560px;height:560px">
+        <!-- cinco tramos de 69° con 3° de hueco -->
+        <svg class="arco" width="560" height="560" viewBox="0 0 100 100" aria-hidden="true">
+          <g transform="rotate(-90 50 50)">
+            <circle class="pista" cx="50" cy="50" r="41.5"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="0"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-72"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-144"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-216"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="69 360" stroke-dashoffset="-288"/>
+          </g>
+        </svg>
+        <div class="dentro"><span class="cifra hueso">Tu plan</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Cuatro piezas -->
+  <section class="slide piezas">
+    <!-- NOTA: Lo que habéis visto es solo una de las cuatro piezas. La app habla con una API en api.gymprofit.app, que guarda los datos en una base de datos MySQL. Hay un panel para gestionar el catálogo y los usuarios, y una web con la privacidad y los términos. En el TFG todo vivía en dos servidores EC2 de AWS; hoy la API está en Render, la base de datos en Aiven y el panel y la web en Cloudflare. La API cabe en 512 MB: cuando empezó a caerse por memoria, medí cada parte y el pico bajó de 501 a 438 MB. (50 s) -->
+    <h2 class="titular">Detrás del móvil hay cuatro piezas en producción</h2>
+    <svg class="conectores" viewBox="0 0 1920 1080" aria-hidden="true">
+      <line x1="495" y1="550" x2="730" y2="550"/>
+      <line x1="900" y1="800" x2="900" y2="868"/>
+      <line x1="1035" y1="456" x2="1115" y2="456"/>
+    </svg>
+    <div class="anillo" style="position:absolute;left:750px;top:400px;width:300px;height:300px">
+      <svg class="arco" width="300" height="300" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="naranja-t" cx="50" cy="50" r="41.5"/>
+      </svg>
+      <div class="dentro"><span class="api-txt">API</span></div>
+    </div>
+    <p class="nodo niebla" style="left:600px;top:716px;width:600px;text-align:center"><small style="margin:0">api.gymprofit.app</small></p>
+    <p class="nodo" style="left:150px;top:514px">App Android</p>
+    <p class="nodo" style="left:600px;top:886px;width:600px;text-align:center">Base de datos</p>
+    <p class="nodo" style="right:150px;top:420px;text-align:right">Panel de administración<small>admin.gymprofit.app</small></p>
+    <p class="nodo" style="right:150px;top:800px;text-align:right">Web<small>gymprofit.app</small></p>
+  </section>
+
+  <!-- 5 · Ni una serie perdida -->
+  <section class="slide series">
+    <!-- NOTA: Android cierra las apps en segundo plano cuando le falta memoria, y en mitad de un entreno pasa. Por eso la sesión se escribe en el disco con cada cambio: si el sistema la cierra, al volver está todo, serie por serie. Y el descanso suena con una alarma exacta aunque la pantalla esté apagada. (50 s) -->
+    <h2 class="titular">Aunque Android cierre la app, no se pierde ni una serie</h2>
+    <div class="cuerpo">
+      <!-- tres series de 117° con 3° de hueco; dos apuntadas -->
+      <figure>
+        <svg class="arco" width="340" height="340" viewBox="0 0 100 100" aria-hidden="true">
+          <g transform="rotate(-90 50 50)">
+            <circle class="pista" cx="50" cy="50" r="41.5"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="0"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="-120"/>
+          </g>
+        </svg>
+        <figcaption class="hueso">Serie 2 apuntada</figcaption>
+      </figure>
+      <figure>
+        <svg class="arco" width="340" height="340" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="pista" cx="50" cy="50" r="41.5"/>
+        </svg>
+        <figcaption class="niebla">Android la cierra</figcaption>
+      </figure>
+      <figure>
+        <svg class="arco" width="340" height="340" viewBox="0 0 100 100" aria-hidden="true">
+          <g transform="rotate(-90 50 50)">
+            <circle class="pista" cx="50" cy="50" r="41.5"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="0"/>
+            <circle class="naranja-t" cx="50" cy="50" r="41.5" pathLength="360" stroke-dasharray="117 360" stroke-dashoffset="-120"/>
+          </g>
+        </svg>
+        <figcaption class="hueso">Al volver, sigue ahí</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6 · Índice propio -->
+  <section class="slide indice">
+    <!-- NOTA: Al principio, cada letra que escribías se consultaba a Open Food Facts, una base de datos abierta. Solo deja 10 búsquedas por minuto por dirección, y todos los usuarios salían por la misma: con pocos a la vez, la búsqueda se caía para todos. Ahora la API tiene su propio índice en memoria con 198.000 productos de España y cientos de alimentos básicos. En las pruebas en local responde en 24 milisegundos, y se actualiza sola cada semana. (55 s) -->
+    <h2 class="titular">Buscar un alimento ya no depende de nadie</h2>
+    <div class="cuerpo">
+      <p class="cifra grande">198.000</p>
+      <p class="t66 hueso">productos en un índice propio</p>
+      <p class="t60 niebla fuentes">Open Food Facts, Ciqual y USDA</p>
+    </div>
+  </section>
+
+  <!-- 7 · 403 -->
+  <section class="slide prohibido">
+    <!-- NOTA: Si alguien pide los datos de otro usuario, la API responde 403: prohibido. Quién eres sale siempre de tu sesión, nunca de lo que diga la app. Cada ruta que recibe un identificador nace con un test que intenta leer datos ajenos y comprueba que no puede. Ni siquiera una cuenta de administrador ve tus datos, y si borras la cuenta, se borra todo en el momento. (50 s) -->
+    <h2 class="titular">Nadie ve los datos de otro, y un test lo comprueba en cada ruta</h2>
+    <div class="cuerpo">
+      <p class="t66 hueso peticion">Pedir la sesión de otro usuario</p>
+      <span class="linea" aria-hidden="true"></span>
+      <div class="respuesta">
+        <p class="cifra">403</p>
+        <p class="t66 hueso">Prohibido</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · Tests -->
+  <section class="slide tests">
+    <!-- NOTA: Nada de esto vale si se rompe al cambiarlo. Cada cambio va en su rama, pasa más de 1.100 tests y solo entonces la API se despliega sola. Luego lo pruebo en producción con cuentas de prueba que después borro. Van 26 versiones, y cada decisión importante está escrita con su porqué y lo que la haría cambiar: 49 hasta hoy. (45 s)
+         Dato: 1.217 tests en el último CI verde de main (14-10-2026). -->
+    <h2 class="titular">La API solo llega a producción si pasan todos los tests</h2>
+    <div class="cuerpo">
+      <div class="anillo" style="width:600px;height:600px">
+        <svg class="arco" width="600" height="600" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="naranja-t" cx="50" cy="50" r="41.5"/>
+        </svg>
+        <div class="dentro">
+          <span class="t60 niebla">más de</span>
+          <span class="cifra">1.100</span>
+          <span class="t60 niebla">tests</span>
+        </div>
+      </div>
+      <div class="columna">
+        <p class="fila"><span class="cifra hueso">26</span><span class="t60 niebla">versiones</span></p>
+        <p class="fila"><span class="cifra hueso">49</span><span class="t60 niebla">decisiones escritas</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · Cierre -->
+  <section class="slide cierre" aria-label="Simple por fuera, potente por dentro">
+    <!-- NOTA: Empezó como un TFG y hoy funciona en producción, con un grupo de gente probándola. Si os quedáis con una frase, que sea la segunda decisión que escribí para el proyecto: simple por fuera, potente por dentro. Gracias. (30 s) -->
+    <p class="recap">Empezó como un TFG y hoy funciona en producción</p>
+    <h2 class="frase">Simple por fuera,<br>potente por dentro</h2>
+    <img class="g" src="assets/logo-g.svg" alt="">
+  </section>
+
+</main>
+</div>
+
+<script>
+/* === CONTROLADOR (mecánica de frontend-slides) === */
+class SlidePresentation {
+  constructor() {
+    this.slides = [...document.querySelectorAll('.slide')];
+    this.stage = document.getElementById('deckStage');
+    this.current = Math.max(0, this.slides.findIndex((s) => s.classList.contains('active')));
+    this.setupStageScale();
+    this.setupKeyboardNav();
+    this.setupTouchNav();
+    this.show(this.current);
+  }
+
+  setupStageScale() {
+    const scale = () => {
+      const f = Math.min(innerWidth / 1920, innerHeight / 1080);
+      this.stage.style.transform =
+        `translate(${(innerWidth - 1920 * f) / 2}px, ${(innerHeight - 1080 * f) / 2}px) scale(${f})`;
+    };
+    scale();
+    addEventListener('resize', scale);
+  }
+
+  setupKeyboardNav() {
+    addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); this.show(this.current + 1); }
+      if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.show(this.current - 1); }
+      if (e.key === 'Home') this.show(0);
+      if (e.key === 'End') this.show(this.slides.length - 1);
+    });
+  }
+
+  setupTouchNav() {
+    let x0 = null;
+    addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) this.show(this.current + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+  }
+
+  show(i) {
+    const prev = this.current;
+    this.current = Math.max(0, Math.min(i, this.slides.length - 1));
+    this.slides.forEach((s, n) => {
+      s.classList.toggle('active', n === this.current);
+      s.classList.toggle('visible', n === this.current);
+    });
+    if (this.slides[this.current].id === 's-commits' && (prev !== this.current || !this.started)) cifrasQueCuentan();
+    this.started = true;
+  }
+}
+
+/* === MOMENTO ÚNICO: «Cifras que cuentan» (diapositiva 2) ===
+   Niebla aparece en 300 ms; luego Naranja barre 306,98° en 1.200 ms con 1 − (1 − t)³ y «645» cuenta a la par.
+   El HTML ya lleva el estado final; con reduced motion no se toca nada. */
+let rafCommits = 0;
+function cifrasQueCuentan() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const tfg = document.getElementById('tramoTfg');
+  const despues = document.getElementById('tramoDespues');
+  const cuenta = document.getElementById('cuenta645');
+  const LARGO = 306.98, FIN = 645, FUNDIDO = 300, BARRIDO = 1200;
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  cancelAnimationFrame(rafCommits);
+  tfg.style.opacity = '0';
+  despues.setAttribute('stroke-dasharray', '0 360');
+  cuenta.textContent = '0';
+  const t0 = performance.now();
+  const frame = (now) => {
+    const t = Math.max(0, now - t0);
+    tfg.style.opacity = String(Math.min(1, ease(Math.min(1, t / FUNDIDO))));
+    const p = ease(Math.min(1, Math.max(0, (t - FUNDIDO) / BARRIDO)));
+    despues.setAttribute('stroke-dasharray', `${(LARGO * p).toFixed(2)} 360`);
+    cuenta.textContent = String(Math.round(FIN * p));
+    if (t < FUNDIDO + BARRIDO) rafCommits = requestAnimationFrame(frame);
+  };
+  rafCommits = requestAnimationFrame(frame);
+}
+
+new SlidePresentation();
+</script>
+</body>
+</html>
