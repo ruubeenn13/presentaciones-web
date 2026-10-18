@@ -1,83 +1,145 @@
+<a href="https://ruubeenn13.github.io/presentaciones-web/">
+  <img src="docs/readme/portada.svg" width="100%" alt="Tres diapositivas que se suceden: «Primero el guion.», «Después, el diseño.» y «Y alguien que lo cuente.»">
+</a>
+
 # presentaciones-web
 
-Presentaciones web de un solo archivo, escritas con guion primero y estilo propio, que se revisan solas antes de presentarse.
+Presentaciones web de un solo archivo. Cada una empieza por el guion, tiene un estilo que no se repite y pasa por un crítico antes de salir a escena. Se presentan en el navegador sin internet, se publican en su propia URL y llevan siempre un PDF de respaldo.
 
-**Web publicada:** https://ruubeenn13.github.io/presentaciones-web/
+<p>
+  <a href="https://ruubeenn13.github.io/presentaciones-web/"><img src="docs/readme/boton-web.svg" height="66" alt="Ver las presentaciones publicadas"></a>&nbsp;&nbsp;
+  <a href="#empezar-un-deck"><img src="docs/readme/boton-empezar.svg" height="66" alt="Empezar un deck en tres comandos"></a>
+</p>
 
-![Portada de un deck de muestra: «Primero el guion. Después, el diseño.»](docs/portada.png)
+## Siete pasos, siempre en el mismo orden
 
-Cada deck vive en su carpeta, se presenta en el navegador sin conexión, se exporta a PDF de respaldo y se publica en su propia URL de GitHub Pages. Claude Code dirige el proceso con una skill del proyecto; la persona decide en cada paso.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme/flujo-oscuro.svg">
+  <img src="docs/readme/flujo-claro.svg" width="100%" alt="Los siete pasos: brief, guion, estilo, construir, render, crítico y PDF">
+</picture>
 
-## Cómo funciona
+El orden importa: el estilo no se elige hasta que el guion está aprobado, porque si una frase no se sostiene, ningún diseño la salva.
 
-![Los siete pasos del flujo, con el guion destacado](docs/flujo.png)
+| | Paso | Qué ocurre | Queda en |
+|:-:|---|---|---|
+| 1 | **Brief** | Público, duración, objetivo y la única idea que deben recordar | `brief.md` |
+| 2 | **Guion** | Una fila por diapositiva: titular que afirma algo, evidencia visual, nota del orador y segundos | `guion.md` |
+| 3 | **Estilo** | Tres portadas muy distintas. Se elige una y se fijan paleta, tipografías y un único motivo visual | `design.md` |
+| 4 | **Construir** | La presentación, con [frontend-slides](https://github.com/zarazhangrui/frontend-slides) | `index.html` |
+| 5 | **Render** | Captura de cada diapositiva a 1920 × 1080 y aviso de desbordes, cortes, solapes y texto pequeño | `renders/` |
+| 6 | **Crítico** | Un subagente que no ha visto la conversación revisa las capturas y devuelve solo fallos con su arreglo | `deck-critic` |
+| 7 | **PDF** | La copia de respaldo, una página por diapositiva | `<deck>.pdf` |
 
-| Paso | Qué ocurre | Dónde queda |
-|---|---|---|
-| Brief | Público, duración, objetivo y la idea que deben recordar | `brief.md` |
-| Guion | Una fila por diapositiva: titular que afirma, evidencia visual, nota del orador y segundos. Se aprueba antes de diseñar | `guion.md` |
-| Estilo | Tres portadas muy distintas; se elige una y se fija paleta, tipografías y un único motivo visual | `design.md` |
-| Construir | La presentación con [frontend-slides](https://github.com/zarazhangrui/frontend-slides) | `index.html`, `assets/` |
-| Render | Captura de cada diapositiva a 1920x1080 y aviso de desbordes, cortes, solapes y texto pequeño | `renders/` |
-| Crítico | Un subagente sin contexto de la conversación revisa brief, diseño y capturas, y devuelve solo fallos con arreglo | `.claude/agents/deck-critic.md` |
-| PDF | Copia de respaldo, una página por diapositiva | `<deck>.pdf` |
-
-Las reglas de contenido y diseño (titulares que afirman, 20 palabras por pantalla, texto de 30 pt, contraste 4,5:1, lista de recursos prohibidos) están en [`.claude/skills/presentaciones/SKILL.md`](.claude/skills/presentaciones/SKILL.md).
-
-## Stack
-
-- HTML, CSS y JavaScript sin dependencias en cada presentación; fuentes locales.
-- Node.js 20+ y Playwright para capturas, comprobaciones y PDF.
-- Claude Code con el plugin frontend-slides, una skill y un subagente propios.
-- GitHub Actions y GitHub Pages para publicar.
-
-## Crear un deck
+## Empezar un deck
 
 ```powershell
-npm install
-npx playwright install chromium
-
-npm run nuevo-deck -- "Tema del deck"        # crea decks/AAAA-MM-tema-del-deck/
+npm install && npx playwright install chromium   # una sola vez
+npm run nuevo-deck -- "Tema del deck"           # crea decks/AAAA-MM-tema-del-deck/
 ```
 
-En Claude Code, pide la presentación («hazme una presentación sobre…»). La skill se activa sola y sigue el flujo. Al terminar:
+Después, en Claude Code: *«hazme una presentación sobre…»*. La skill del proyecto se activa sola y guía los siete pasos. Para cerrar:
 
 ```powershell
-npm run render -- AAAA-MM-tema-del-deck      # capturas y comprobaciones
-npm run pdf -- AAAA-MM-tema-del-deck         # PDF de respaldo
+npm run render -- AAAA-MM-tema-del-deck   # capturas y comprobaciones
+npm run pdf -- AAAA-MM-tema-del-deck      # PDF de respaldo
 ```
 
-Un deck está terminado cuando el render no encuentra desbordes, el crítico no devuelve fallos y el PDF está exportado.
+Un deck está terminado cuando el render no encuentra desbordes, el crítico no devuelve fallos y el PDF existe.
 
-## Presentar
+<details>
+<summary><b>Presentar</b>: navegador, F11 y nada más</summary>
+<br>
 
-Abre `decks/<deck>/index.html` en el navegador y pulsa F11. Flechas, espacio o Re Pág / Av Pág para moverte. No necesita internet. Si el equipo falla, usa el PDF.
+Abre `decks/<deck>/index.html` y pulsa **F11**. Te mueves con las flechas, la barra espaciadora o Re Pág y Av Pág, igual que con un mando de presentación.
 
-## Publicar
+Las fuentes van dentro de la carpeta del deck, así que funciona sin conexión. Si el ordenador del aula falla, el PDF está al lado.
 
-Cada push a `main` que toque `decks/` publica la web. Cada deck queda en su propia URL:
+</details>
+
+<details>
+<summary><b>Publicar</b>: cada deck en su propia URL</summary>
+<br>
+
+Cada push a `main` que toque `decks/` vuelve a publicar la web con GitHub Actions. Cada deck queda en:
 
 ```
 https://ruubeenn13.github.io/presentaciones-web/<deck>/
 ```
 
-La raíz muestra la lista de decks con título y fecha.
+La [página principal](https://ruubeenn13.github.io/presentaciones-web/) lista todos los decks con su título y su fecha; el más reciente ocupa toda la fila.
 
-## Estructura
+</details>
+
+<details>
+<summary><b>El crítico</b>: por qué revisa alguien que no ha visto nada</summary>
+<br>
+
+Quien acaba de hacer una diapositiva ve lo que quería hacer, no lo que hay. Por eso el crítico es un subagente sin acceso a la conversación: lee el brief, el diseño y las capturas, como lo vería el público.
+
+Busca solo fallos que afecten al objetivo: una idea que no se entiende en tres segundos, titulares que nombran un tema en vez de afirmar algo, contraste por debajo de 4,5:1, texto por debajo de 30 pt, desbordes y solapes, colores o fuentes que no están en `design.md` y los tics que delatan una presentación hecha con IA. Nada de gustos personales. Como mucho, dos rondas de corrección.
+
+Está en [`.claude/agents/deck-critic.md`](.claude/agents/deck-critic.md).
+
+</details>
+
+<details>
+<summary><b>Las reglas</b>: lo que nunca aparece en un deck</summary>
+<br>
+
+| Siempre | Nunca |
+|---|---|
+| Una idea por diapositiva | Diapositivas solo de viñetas |
+| Titulares que afirman («Las ventas cayeron por el horario») | Titulares que nombran un tema («Ventas») |
+| 20 palabras o menos en pantalla | Líneas de acento bajo los títulos o franjas decorativas |
+| Texto de 30 pt o más y contraste de 4,5:1 | Inter, Roboto o Arial por defecto |
+| Un color dominante y un solo acento | Fondo crema con terracota o degradados morados |
+| Maquetas variadas dentro de un sistema | La misma maqueta cinco veces |
+| Movimiento solo donde algo cambia | Cada bloque entrando con un fundido |
+
+La lista completa está en la skill: [`.claude/skills/presentaciones/SKILL.md`](.claude/skills/presentaciones/SKILL.md).
+
+</details>
+
+<details>
+<summary><b>Estructura</b>: dónde está cada cosa</summary>
+<br>
 
 ```
 decks/
-  _plantilla/            plantilla que copia nuevo-deck
-  AAAA-MM-tema/          brief.md, guion.md, design.md, index.html, assets/, renders/, PDF
-scripts/                 nuevo-deck, render, pdf y build-site (Node + Playwright)
-site/                    página índice de GitHub Pages
-docs/                    deck de muestra y capturas de este README
+  _plantilla/             lo que copia nuevo-deck
+  AAAA-MM-tema/           brief.md · guion.md · design.md · index.html · assets/ · renders/ · PDF
+scripts/                  nuevo-deck, render, pdf y build-site (Node + Playwright)
+site/                     página principal de GitHub Pages
+docs/                     deck de muestra e imágenes de este README
 .claude/
-  skills/presentaciones/ proceso y reglas de estilo
-  agents/deck-critic.md  revisor sin contexto
-.github/workflows/       publicación en GitHub Pages
+  skills/presentaciones/  el proceso y las reglas de estilo
+  agents/deck-critic.md   el revisor sin contexto
+.github/workflows/        publicación en GitHub Pages
 ```
 
-## Licencia
+| Script | Qué hace |
+|---|---|
+| `npm run nuevo-deck -- "Tema"` | Copia la plantilla con la fecha y el nombre |
+| `npm run render -- <deck>` | Captura cada diapositiva y falla si hay desbordes o texto cortado |
+| `npm run pdf -- <deck>` | Exporta el PDF de respaldo |
+| `npm run build-site` | Monta la web con un índice y una carpeta por deck |
 
-[MIT](LICENSE). Las fuentes Fraunces e IBM Plex Mono se distribuyen con la SIL Open Font License 1.1; sus licencias están junto a los archivos.
+</details>
+
+<details>
+<summary><b>Así se ve un deck</b>: la muestra de <code>docs/ejemplo</code></summary>
+<br>
+
+<img src="docs/portada.png" width="100%" alt="Portada del deck de muestra: «Primero el guion. Después, el diseño.»">
+
+Cada deck tiene su propia paleta y sus tipografías; esta es solo una muestra.
+
+</details>
+
+## Hecho con
+
+HTML, CSS y JavaScript sin dependencias en cada presentación, Node.js y Playwright para capturas, comprobaciones y PDF, Claude Code con frontend-slides, una skill y un subagente propios, y GitHub Actions con GitHub Pages para publicar.
+
+---
+
+Licencia [MIT](LICENSE), hecho por [@ruubeenn13](https://github.com/ruubeenn13). Las fuentes Fraunces e IBM Plex Mono se distribuyen con la SIL Open Font License 1.1; sus licencias están junto a los archivos.
