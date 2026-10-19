@@ -6,10 +6,12 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { crearEstudio, CUERPO, PANTALLA } from './movil.js';
+import { intro, barrido, prepararTitulares } from './cinetica.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (reducido) document.documentElement.classList.remove('antes-de-intro');
 const escenas = [...document.querySelectorAll('.slide')];
 const fondos = [...document.querySelectorAll('.fondo')];
 const numero = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
@@ -134,9 +136,11 @@ let lenis = null;
 function lanzarEntrada() {
   if (entrada.lanzada) return;
   entrada.lanzada = true;
-  gsap.to(entrada, { t: 1, duration: 2.8, ease: 'power2.inOut', onComplete: () => { lenis?.start(); irA(0, true); } });
+  // Secuencia cinética (unos 6 s) y, al asentarse la palabra, entra el móvil como antes.
+  intro().then(() => gsap.to(entrada, { t: 1, duration: 2.4, ease: 'power2.inOut', onComplete: () => { lenis?.start(); irA(0, true); } }));
 }
 function completarEntrada() {
+  document.documentElement.classList.remove('antes-de-intro');
   gsap.killTweensOf(entrada);
   entrada.t = 1; entrada.lanzada = true;
   lenis?.start();
@@ -315,6 +319,18 @@ function lineasDeTiempo() {
   relleno(t);
 }
 
+// ---------- Cambio de escena: un único barrido de color plano (prueba cinética) ----------
+let enBarrido = false;
+function ir(n, desde) {
+  const i = Math.max(0, Math.min(escenas.length - 1, n));
+  if (reducido || i === desde) return irA(i, reducido);
+  enBarrido = true;
+  // Grafito al entrar o salir de la escena naranja; naranja en el resto.
+  const color = i === 5 || desde === 5 ? '#0B0C0E' : '#FF6A00';
+  barrido(() => { irA(i, true); ScrollTrigger.update(); fotograma(); }, escenas[i], color, i > desde ? 1 : -1)
+    .then(() => { enBarrido = false; });
+}
+
 // ---------- Teclado: escena siguiente y anterior ----------
 const TECLAS_SIG = [' ', 'ArrowRight', 'ArrowDown', 'PageDown'];
 const TECLAS_ANT = ['ArrowLeft', 'ArrowUp', 'PageUp'];
@@ -325,13 +341,14 @@ window.addEventListener('keydown', (e) => {
   // La primera tecla lanza la entrada de la portada; la navegación empieza cuando termina.
   if (!entrada.lanzada) return lanzarEntrada();
   if (entrada.t < 1) return;
+  if (enBarrido) return;
   const y = window.scrollY;
   const n = escenaEn(y);
-  if (e.key === 'Home') return irA(0);
-  if (e.key === 'End') return irA(escenas.length - 1);
+  if (e.key === 'Home') return ir(0, n);
+  if (e.key === 'End') return ir(escenas.length - 1, n);
   // Desde el reposo de la escena actual va a la siguiente; a medio camino, completa la actual.
-  if (sig) irA(y < reposos[n] - 4 ? n : n + 1);
-  else irA(y > reposos[n] + 4 ? n : n - 1);
+  if (sig) ir(y < reposos[n] - 4 ? n : n + 1, n);
+  else ir(y > reposos[n] + 4 ? n : n - 1, n);
 });
 for (const ev of ['wheel', 'touchstart']) window.addEventListener(ev, lanzarEntrada, { passive: true });
 
@@ -358,6 +375,7 @@ async function arrancar() {
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
     if (!entrada.lanzada) lenis.stop();
+    prepararTitulares();
     lineasDeTiempo();
   }
   // Al cambiar el tamaño (F11, ventana) las escenas cambian de alto: se vuelve al reposo de la escena actual.

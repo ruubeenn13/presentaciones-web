@@ -182,6 +182,24 @@ img { display: block; }
 .t-cierre { left: calc(800 * var(--u)); top: calc(470 * var(--u)); width: calc(1000 * var(--u)); font-size: calc(128 * var(--u)); }
 .logo-g { left: calc(800 * var(--u)); top: calc(780 * var(--u)); width: calc(130 * var(--u)); height: auto; }
 
+/* ---------- Tipografía cinética (prueba): portada y cambios de escena ---------- */
+/* Antes de la primera tecla, la portada está a oscuras: la secuencia la descubre. */
+.antes-de-intro .fondo[data-escena="1"] .gigante, .antes-de-intro #escena-1 .portada-sub, .antes-de-intro #escena-1 .margen,
+.antes-de-intro #escena-1 .contador { visibility: hidden; }
+#cinetica { position: fixed; inset: 0; z-index: 40; overflow: hidden; pointer-events: none; }
+#cinetica[hidden] { display: none; }
+.cin-linea {
+  position: absolute; margin: 0; white-space: nowrap; visibility: hidden;
+  font-family: var(--f-cond); line-height: 0.85; letter-spacing: -0.02em;
+}
+.cin-palabra, .cin-palabra-titular { display: inline-block; transform-origin: 50% 60%; will-change: transform, filter; }
+.cin-filas { position: absolute; inset: 0; visibility: hidden; }
+.cin-fila {
+  position: absolute; left: 0; margin: 0; white-space: nowrap;
+  font-family: var(--f-cond); font-weight: 900; font-size: calc(200 * var(--u)); line-height: 1; letter-spacing: -0.02em;
+}
+.cin-gigante { visibility: hidden; transform-origin: 50% 100%; }
+
 /* ---------- Movimiento reducido: cada escena es una pantalla con su estado final ---------- */
 @media (prefers-reduced-motion: reduce) {
   .slide { height: 100vh; }
