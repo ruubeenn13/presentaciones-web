@@ -29,11 +29,14 @@ function linea(texto, { x, y, tam, color, peso = 900, cursiva = false }) {
   return [...p.querySelectorAll('.cin-palabra')];
 }
 
-/** Golpe de palabra: entra desde un lado, estirada y desenfocada, y frena en seco. */
+/**
+ * Golpe de palabra: entra desde un lado, desenfocada, y frena en seco. En horizontal no se estira
+ * (estirada pisaba a la vecina: «Unproyecto»); en vertical sí, porque no toca a las de al lado.
+ */
 function golpe(tl, palabras, at, { eje = 'x', desde = -1, paso = 0.13 } = {}) {
-  const prop = eje === 'x' ? { xPercent: 140 * desde, scaleX: 2.2, scaleY: 0.9 } : { yPercent: 160 * desde, scaleY: 2.4, scaleX: 0.92 };
+  const prop = eje === 'x' ? { xPercent: 140 * desde, skewX: -14 * desde } : { yPercent: 160 * desde, scaleY: 2.4, scaleX: 0.92 };
   tl.fromTo(palabras, { ...prop, filter: 'blur(18px)', opacity: 0 }, {
-    xPercent: 0, yPercent: 0, scaleX: 1, scaleY: 1, filter: 'blur(0px)', opacity: 1,
+    xPercent: 0, yPercent: 0, scaleX: 1, scaleY: 1, skewX: 0, filter: 'blur(0px)', opacity: 1,
     duration: 0.32, ease: 'expo.out', stagger: paso,
   }, at);
 }
@@ -84,33 +87,34 @@ export function intro() {
   const lineas = (ws) => ws.map((w) => w.parentElement).filter((v, i, a) => a.indexOf(v) === i);
   return new Promise((listo) => {
     const tl = gsap.timeline({ onComplete: () => { capa.hidden = true; lienzo.textContent = ''; listo(); } });
+    // Unos 3,9 s de tipografía; después entra el móvil (2,1 s): 6 s desde la tecla hasta que queda quieto.
     corte(tl, 0, NARANJA, lineas(p1));
-    golpe(tl, p1, 0.05);
-    corte(tl, 0.95, GRAFITO, lineas(p2));
-    golpe(tl, p2, 0.98, { desde: 1 });
-    corte(tl, 1.75, NARANJA, lineas(p3));
-    golpe(tl, p3, 1.78, { eje: 'y', desde: 1 });
-    corte(tl, 2.55, GRAFITO, lineas([...p4a, ...p4b]));
-    golpe(tl, p4a, 2.58, { desde: -1, paso: 0.1 });
-    golpe(tl, p4b, 2.9, { desde: 1, paso: 0.12 });
+    // En horizontal todas entran desde la derecha, donde aún no hay texto: así ninguna pasa por encima de otra.
+    golpe(tl, p1, 0, { desde: 1, paso: 0.1 });
+    corte(tl, 0.62, GRAFITO, lineas(p2));
+    golpe(tl, p2, 0.62, { desde: 1, paso: 0.1 });
+    corte(tl, 1.2, NARANJA, lineas(p3));
+    golpe(tl, p3, 1.2, { eje: 'y', desde: 1, paso: 0.1 });
+    corte(tl, 1.78, GRAFITO, lineas([...p4a, ...p4b]));
+    golpe(tl, p4a, 1.78, { desde: 1, paso: 0.08 });
+    golpe(tl, p4b, 2.02, { desde: 1, paso: 0.1 });
     // Plano final: filas en movimiento, la palabra cae gigante y se asienta.
-    corte(tl, 3.55, GRAFITO, [filas]);
+    corte(tl, 2.55, GRAFITO, [filas]);
     [...filas.children].forEach((f, i) => {
-      tl.fromTo(f, { xPercent: i % 2 ? -30 : -5 }, { xPercent: i % 2 ? -5 : -30, duration: 2.4, ease: 'none' }, 3.55);
+      tl.fromTo(f, { xPercent: i % 2 ? -30 : -5 }, { xPercent: i % 2 ? -10 : -25, duration: 1.4, ease: 'none' }, 2.55);
     });
-    tl.set(gigante, { visibility: 'visible' }, 3.7);
+    tl.set(gigante, { visibility: 'visible' }, 2.62);
     tl.fromTo(gigante, { yPercent: -260, scaleY: 2.2, filter: 'blur(22px)' },
-      { yPercent: 0, scaleY: 1, filter: 'blur(0px)', duration: 0.42, ease: 'power4.in' }, 3.7);
+      { yPercent: 0, scaleY: 1, filter: 'blur(0px)', duration: 0.36, ease: 'power4.in' }, 2.62);
     // Impacto: aplastamiento corto y las filas acusan el golpe.
-    tl.to(gigante, { scaleY: 0.86, scaleX: 1.04, duration: 0.07, ease: 'power2.out' }, 4.12);
-    tl.to(gigante, { scaleY: 1, scaleX: 1, duration: 0.35, ease: 'elastic.out(1, 0.5)' }, 4.19);
-    tl.to(filas, { y: 18, duration: 0.07, yoyo: true, repeat: 1 }, 4.12);
-    // Se asienta: las filas se cortan en seco y el fondo de la capa desaparece; queda la portada.
-    corte(tl, 5.6, GRAFITO, [gigante]);
-    // La portada real (oculta hasta ahora) aparece debajo, idéntica, y la capa se retira.
-    tl.call(() => document.documentElement.classList.remove('antes-de-intro'), null, 5.9);
-    tl.set(capa, { background: 'transparent' }, 5.95);
-    tl.to({}, { duration: 0.05 }, 6.0);
+    tl.to(gigante, { scaleY: 0.86, scaleX: 1.04, duration: 0.06, ease: 'power2.out' }, 2.98);
+    tl.to(gigante, { scaleY: 1, scaleX: 1, duration: 0.3, ease: 'elastic.out(1, 0.5)' }, 3.04);
+    tl.to(filas, { y: 18, duration: 0.06, yoyo: true, repeat: 1 }, 2.98);
+    // Se asienta: las filas se cortan en seco; la portada real aparece debajo, idéntica, y la capa se retira.
+    corte(tl, 3.55, GRAFITO, [gigante]);
+    tl.call(() => document.documentElement.classList.remove('antes-de-intro'), null, 3.8);
+    tl.set(capa, { background: 'transparent' }, 3.85);
+    tl.to({}, { duration: 0.02 }, 3.88);
   });
 }
 
@@ -131,15 +135,21 @@ export function barrido(saltar, escena, color, sentido = 1) {
   return new Promise((listo) => {
     gsap.timeline({ onComplete: () => { capa.hidden = true; capa.style.clipPath = ''; listo(); } })
       .fromTo(capa, { clipPath: tapa[0] }, { clipPath: tapa[1], duration: 0.38, ease: 'power3.in' })
+      // Con la pantalla tapada del todo: salta a la escena nueva y prepara su titular.
       .call(() => {
         saltar();
-        gsap.set(palabras, { xPercent: 90 * sentido, scaleX: 2, filter: 'blur(16px)', opacity: 0 });
+        gsap.set(palabras, { xPercent: 70 * sentido, filter: 'blur(14px)', opacity: 0 });
       })
-      .to(capa, { clipPath: tapa[2], duration: 0.36, ease: 'power3.out' }, '+=0.04')
+      // Dos fotogramas para que el salto llegue a pantalla antes de destapar.
+      .to({}, { duration: 0.04 })
+      .addLabel('destapa')
+      .to(capa, { clipPath: tapa[2], duration: 0.36, ease: 'power3.out' }, 'destapa')
+      // El titular entra a la vez que se destapa (solo desplazamiento y desenfoque: estirar las
+      // palabras las montaba unas sobre otras, «programay»).
       .to(palabras, {
-        xPercent: 0, scaleX: 1, filter: 'blur(0px)', opacity: 1,
-        duration: 0.34, ease: 'expo.out', stagger: 0.045, clearProps: 'filter,transform',
-      }, '-=0.22');
+        xPercent: 0, filter: 'blur(0px)', opacity: 1,
+        duration: 0.32, ease: 'expo.out', stagger: 0.03, clearProps: 'filter,transform',
+      }, 'destapa');
   });
 }
 

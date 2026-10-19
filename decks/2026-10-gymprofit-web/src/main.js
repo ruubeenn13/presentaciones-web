@@ -23,7 +23,7 @@ const BASE = { rz: 0, luz: 1, oro: 0, sombra: 1, ambiente: 1, barrido: 0, cam: 0
  * En reposo siempre de cara (giro pequeño) para que la toma se lea; fuera de cuadro cuando no toca.
  */
 const POSES = [
-  { x: 1075, y: 770, h: 520, ry: -0.12, rx: 0.04 },               // 1 delante de la palabra, tapando su parte baja
+  { x: 1100, y: 765, h: 400, ry: -0.12, rx: 0.04 },               // 1 delante de la palabra, tapando su parte baja
   { x: 2550, y: 620, h: 600, ry: -0.3, rx: 0.04 },               // 2 fuera de cuadro: el gráfico manda
   { x: 1420, y: 525, h: 860, ry: -0.12, rx: 0.02 },              // 3 alta
   { x: 300, y: 560, h: 420, ry: 0.14, rx: 0.03, luz: 0.6 },      // 4 se encoge a un lado
@@ -137,7 +137,7 @@ function lanzarEntrada() {
   if (entrada.lanzada) return;
   entrada.lanzada = true;
   // Secuencia cinética (unos 6 s) y, al asentarse la palabra, entra el móvil como antes.
-  intro().then(() => gsap.to(entrada, { t: 1, duration: 2.4, ease: 'power2.inOut', onComplete: () => { lenis?.start(); irA(0, true); } }));
+  intro().then(() => gsap.to(entrada, { t: 1, duration: 2.1, ease: 'power2.inOut', onComplete: () => { lenis?.start(); irA(0, true); } }));
 }
 function completarEntrada() {
   document.documentElement.classList.remove('antes-de-intro');
