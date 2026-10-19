@@ -65,17 +65,19 @@ detrás de él; el scroll mueve la cámara, no dispara animaciones. Cada secció
   grabaciones reales. Aluminio grafito satinado (rugosidad 0,55, poco reflejo del HDRI) para que
   se vea igual en todas las escenas. Iluminación HDRI de Poly Haven (`studio_small_09`, CC0), dos
   focos rasantes que solo tocan los cantos (naranja; dorado en el cierre) y una sombra de contacto.
-- **Poses**: en reposo, siempre de cara (giro ≤ 0,15 rad) para que la toma se lea. Entre escenas
-  se pone de canto (90°), cambia la pantalla mientras no se ve y vuelve de cara; el sentido se
-  alterna. En las escenas 2, 7 y 8 sale de cuadro. La vuelta entera es solo de la portada.
+- **Poses**: en reposo, siempre de cara (giro ≤ 0,15 rad) para que la toma se lea. Al cambiar de
+  escena con el teclado, el salto ocurre tapado por el barrido, así que la pantalla nunca cambia a
+  la vista. Con la rueda (scroll continuo) se pone de canto (90°), cambia la pantalla mientras no se
+  ve y vuelve de cara. En las escenas 2, 7 y 8 sale de cuadro. La vuelta entera es solo de la portada.
 - **Primeros planos**: sincronizados con el vídeo, la cámara se acerca a la parte de la pantalla
   que importa y el texto de la escena se aparta: «Tu plan» (escena 3), las series al volver la
   app (5) y el anillo de 734 a 1.033 kcal (6). Después vuelve al plano general.
 - **Tomas**: la del alta (escena 3) va en bucle, porque es el plan B de la demo. La sesión (5) y el
   alimento (6) se reproducen una vez y se quedan en el último fotograma: plano general, los tres
   rótulos a la vista y el anillo en 1.033. Se habla unos 50 s en cada una.
-- **Palabra gigante**: «GymProFit» entera detrás del canvas 3D; el móvil, delante y abajo, solo
-  tapa la parte baja de las letras del centro, así la palabra se lee entera.
+- **Palabra gigante**: «GymProFit» entera detrás del canvas 3D; el móvil, delante y abajo, centrado
+  en la «r» (x 1100) y más pequeño en la portada (alto 400 px, unos 184 de ancho), solo tapa la
+  parte baja de esa letra: la palabra se lee entera, también durante su entrada.
 - **Revelado por máscara**: las líneas suben desde un `clip-path`, guiadas por el scroll.
 - **Contador**: cifra que cuenta con el scroll, con el ancho final reservado.
 - **Gráfico de commits**: barras por mes que crecen con el scroll; TFG en niebla, después en naranja.
@@ -87,14 +89,28 @@ detrás de él; el scroll mueve la cámara, no dispara animaciones. Cada secció
 - **Contador de escena** abajo a la derecha: «3 de 9». La charla es una secuencia, por eso se numera.
 
 ## Movimiento
-- Todo con scrub (ScrollTrigger + Lenis): el scroll es la línea de tiempo. Escenas fijadas.
-- Un solo momento destacado, en la portada: con la primera tecla o el primer scroll (no al
-  cargar, para que lo vea el público), el móvil sale de la oscuridad dando media vuelta, con el
-  foco barriendo el canto, y se queda delante de la palabra. Es la única vuelta entera.
-- Curvas: `power3.out` para entradas por máscara; `none` para lo que sigue al scroll.
-- Teclado: espacio, → y Av Pág van a la escena siguiente; ←, Re Pág a la anterior (scroll suave
-  de 1,8 s).
-- `prefers-reduced-motion`: sin scrub ni 3D en movimiento; cada escena muestra su estado final.
+Dirección: tipografía cinética a toda pantalla (referencia: los vídeos de motion design de
+`referencias/`), con la paleta y las fuentes de este documento. El movimiento es solo al entrar;
+en reposo todo queda quieto y legible.
+
+- **Un solo momento destacado, la portada** (`src/cinetica.js`, `intro()`). Antes de la primera
+  tecla la pantalla está a oscuras. Con la tecla o el primer scroll, unos 6 s hasta que el móvil
+  queda quieto: cortes secos de color plano (naranja, grafito, naranja, grafito) con «Un proyecto»,
+  «de clase», «llevado como» (cursiva) y «un producto / de verdad»; cada palabra entra desde la
+  derecha, desenfocada, y frena en seco. Después, filas de «GymProFit» corren en sentidos alternos,
+  la palabra cae gigante, se aplasta al chocar y se asienta justo donde está la de la portada; la
+  capa se retira y entra el móvil dando la única vuelta entera (2,1 s).
+- **Un único cambio de escena, el barrido** (`barrido()`), 1,1–1,2 s: un panel de color plano tapa
+  la pantalla (0,38 s, de izquierda a derecha; al revés si se retrocede), la página salta a la
+  escena nueva con todo tapado, y al destaparla (0,36 s) el titular ya está entrando palabra a
+  palabra (desplazamiento y desenfoque, 0,03 s entre palabras). Panel naranja; grafito al entrar o
+  salir de la escena 6, que ya es naranja. Igual en las nueve escenas; en la portada entra su frase.
+- Las palabras no se estiran en horizontal (se montaban: «programay»); solo en las entradas verticales.
+- Teclado: espacio, → y Av Pág, siguiente; ←, Re Pág, anterior; Inicio y Fin, primera y última.
+  Las teclas se ignoran mientras dura un barrido o la entrada.
+- Rueda del ratón: scroll continuo con Lenis y scrub de ScrollTrigger, sin barrido.
+- `prefers-reduced-motion`: sin secuencia, sin barrido ni 3D en movimiento; cada escena muestra
+  su estado final.
 
 ## Imagen
 - Sin fotos de archivo: la única imagen es la app real dentro del móvil. Las fotos de Unsplash

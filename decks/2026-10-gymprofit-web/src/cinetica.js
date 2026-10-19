@@ -131,7 +131,7 @@ export function barrido(saltar, escena, color, sentido = 1) {
   capa.hidden = false;
   capa.style.background = color;
   const tapa = sentido > 0 ? ['inset(0 100% 0 0)', 'inset(0 0% 0 0)', 'inset(0 0 0 100%)'] : ['inset(0 0 0 100%)', 'inset(0 0 0 0%)', 'inset(0 100% 0 0)'];
-  const palabras = [...escena.querySelectorAll('.titular .cin-palabra-titular')];
+  const palabras = [...escena.querySelectorAll('.cin-palabra-titular')];
   return new Promise((listo) => {
     gsap.timeline({ onComplete: () => { capa.hidden = true; capa.style.clipPath = ''; listo(); } })
       .fromTo(capa, { clipPath: tapa[0] }, { clipPath: tapa[1], duration: 0.38, ease: 'power3.in' })
@@ -153,9 +153,9 @@ export function barrido(saltar, escena, color, sentido = 1) {
   });
 }
 
-/** Parte los titulares en palabras para la entrada cinética (sin tocar su texto). */
+/** Parte los titulares (y la frase de la portada) en palabras para la entrada cinética, sin tocar su texto. */
 export function prepararTitulares() {
-  document.querySelectorAll('.titular .linea > span').forEach((s) => {
+  document.querySelectorAll('.titular .linea > span, .portada-sub').forEach((s) => {
     const partes = s.textContent.split(/(\s+)/);
     s.textContent = '';
     for (const p of partes) {

@@ -134,8 +134,8 @@ img { display: block; }
 .pieza-api .pieza-nombre { font-size: calc(200 * var(--u)); color: var(--naranja); }
 .pieza-bd { left: calc(760 * var(--u)); top: calc(800 * var(--u)); }
 .pieza-bd .pieza-nombre { font-size: calc(80 * var(--u)); }
-.pieza-panel { left: calc(1190 * var(--u)); top: calc(390 * var(--u)); }
-.pieza-web { left: calc(1190 * var(--u)); top: calc(700 * var(--u)); }
+.pieza-panel { left: calc(1300 * var(--u)); top: calc(390 * var(--u)); }
+.pieza-web { left: calc(1300 * var(--u)); top: calc(700 * var(--u)); }
 
 /* ---------- 5. Sesión: el móvil grande, cortado por abajo ---------- */
 .t-sesion { left: var(--margen-x); top: var(--margen-y); width: calc(900 * var(--u)); }
