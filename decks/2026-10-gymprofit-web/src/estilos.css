@@ -1,0 +1,209 @@
+/* GymProFit, web de scroll. Tokens de DESIGN.md; todo se mide en un lienzo de 1920x1080
+   (--u = 1 px del lienzo), que escala igual a 4K y se centra en 16:10. */
+:root {
+  --grafito: #0B0C0E;
+  --superficie: #1B1E24;
+  --hueso: #F2F2F3;
+  --niebla: #A1A9B6;
+  --naranja: #FF6A00;
+  --dorado: #E8B84B;
+  --proteina: #6BA6F5;
+  --carbos: #E8A94B;
+  --grasa: #B295E8;
+
+  --u: min(100vw / 1920, 100vh / 1080);
+  --margen-x: calc(144 * var(--u));
+  --margen-y: calc(96 * var(--u));
+
+  --f-cond: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --f-texto: 'Barlow', 'Segoe UI', sans-serif;
+  --entrada: cubic-bezier(0.215, 0.61, 0.355, 1); /* power3.out */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--grafito); }
+body {
+  background: var(--grafito);
+  color: var(--hueso);
+  font-family: var(--f-texto);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- Capas ---------- */
+#fondos { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+/* Suelo del estudio: una luz muy tenue desde abajo, para que el negro tenga profundidad. */
+#fondos::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(110% 70% at 50% 108%, var(--superficie) 0%, rgba(27, 30, 36, 0) 70%);
+}
+/* Ocultos hasta que el script los coloque junto a su escena. */
+.fondo { position: absolute; inset: 0; will-change: transform; visibility: hidden; }
+#estudio { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+#escenas { position: relative; z-index: 2; }
+
+/* Cada escena ocupa 200vh: su marco se queda fijo 100vh mientras el scroll recorre su línea de tiempo. */
+.slide { position: relative; height: 200vh; }
+.escena { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.lienzo {
+  position: absolute; left: 50%; top: 50%;
+  width: calc(1920 * var(--u)); height: calc(1080 * var(--u));
+  transform: translate(-50%, -50%);
+}
+.lienzo > * { position: absolute; }
+
+/* ---------- Tipografía ---------- */
+.titular {
+  font-family: var(--f-cond); font-weight: 800;
+  font-size: calc(100 * var(--u)); line-height: 0.95; letter-spacing: -0.005em;
+  color: var(--hueso);
+}
+.linea { display: block; overflow: hidden; padding-bottom: 0.04em; }
+.linea > span { display: block; }
+.texto { font-size: calc(60 * var(--u)); line-height: 1.15; color: var(--hueso); }
+.apoyo { color: var(--niebla); }
+.etiqueta, .credito, .contador, .margen {
+  font-family: var(--f-texto); font-weight: 600;
+  font-size: calc(48 * var(--u)); line-height: 1.1; color: var(--niebla);
+}
+.cifra {
+  font-family: var(--f-cond); font-weight: 900; line-height: 0.85;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+}
+.gigante {
+  font-family: var(--f-cond); font-weight: 900; line-height: 0.8;
+  font-size: calc(430 * var(--u)); letter-spacing: -0.02em; color: var(--hueso); white-space: nowrap;
+}
+
+/* Marco común: contador de escena y etiqueta vertical de margen. */
+.contador { right: var(--margen-x); bottom: calc(72 * var(--u)); font-variant-numeric: tabular-nums; }
+.margen {
+  left: calc(48 * var(--u)); top: 50%;
+  writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg); white-space: nowrap;
+}
+.credito { left: var(--margen-x); bottom: calc(72 * var(--u)); }
+
+/* ---------- 1. Portada: el móvil dentro de la palabra ---------- */
+.gigante-detras, .gigante-delante {
+  left: 50%; top: calc(290 * var(--u)); transform: translateX(-50%);
+}
+.portada { position: absolute; inset: 0; font-weight: inherit; }
+.portada > .gigante-delante { position: absolute; }
+/* La copia de delante solo dibuja la parte baja de las letras: el móvil queda dentro de la palabra. */
+.gigante-delante { clip-path: inset(46% -5% -40% -5%); }
+.portada-sub {
+  position: absolute; left: var(--margen-x); bottom: var(--margen-y); width: calc(700 * var(--u));
+  font-family: var(--f-texto); font-weight: 500; font-size: calc(64 * var(--u)); line-height: 1.12; color: var(--hueso);
+}
+
+/* ---------- 2. Commits ---------- */
+.t-commits { left: var(--margen-x); top: var(--margen-y); width: calc(1300 * var(--u)); font-size: calc(96 * var(--u)); }
+.grafico { left: var(--margen-x); top: calc(410 * var(--u)); width: calc(1240 * var(--u)); height: calc(600 * var(--u)); }
+.barras {
+  position: absolute; left: 0; right: 0; bottom: calc(70 * var(--u)); height: calc(300 * var(--u));
+  display: grid; grid-template-columns: repeat(9, 1fr); gap: calc(24 * var(--u)); align-items: end;
+}
+.barra {
+  position: relative; height: calc(var(--v) / 276 * 300 * var(--u));
+  min-height: calc(4 * var(--u)); transform-origin: bottom; background: var(--naranja);
+}
+.barra.tfg { background: var(--niebla); }
+.barra.cero { background: var(--superficie); }
+.barra .valor, .barra .mes {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-size: calc(48 * var(--u)); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.barra .valor { bottom: calc(100% + 8 * var(--u)); color: var(--hueso); }
+.barra.tfg .valor, .barra.cero .valor { color: var(--niebla); }
+.barra .mes { top: calc(100% + 12 * var(--u)); color: var(--niebla); }
+.grupo { position: absolute; top: 0; display: flex; align-items: baseline; gap: calc(20 * var(--u)); }
+.grupo .total { font-size: calc(150 * var(--u)); }
+.grupo-tfg { left: 0; }
+.grupo-tfg .total { color: var(--niebla); }
+.grupo-despues { left: calc(5 * (1240 + 24) / 9 * var(--u)); }
+.grupo-despues .total { color: var(--naranja); }
+
+/* ---------- 3. Alta ---------- */
+.t-alta { left: var(--margen-x); top: calc(250 * var(--u)); width: calc(1000 * var(--u)); font-size: calc(120 * var(--u)); }
+.a-alta { left: var(--margen-x); top: calc(660 * var(--u)); width: calc(900 * var(--u)); }
+
+/* ---------- 4. Piezas ---------- */
+.t-piezas { left: var(--margen-x); top: var(--margen-y); width: calc(1500 * var(--u)); }
+.trazos { left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+.trazo { fill: none; stroke: var(--naranja); stroke-width: 4; stroke-linecap: round; }
+.pieza { display: flex; flex-direction: column; gap: calc(6 * var(--u)); }
+.pieza-nombre { font-family: var(--f-cond); font-weight: 800; font-size: calc(96 * var(--u)); line-height: 0.95; color: var(--hueso); }
+.pieza-app { left: calc(200 * var(--u)); top: calc(815 * var(--u)); }
+.pieza-api { left: calc(780 * var(--u)); top: calc(500 * var(--u)); width: calc(480 * var(--u)); }
+.pieza-api .pieza-nombre { font-size: calc(200 * var(--u)); color: var(--naranja); }
+.pieza-panel { left: calc(1340 * var(--u)); top: calc(330 * var(--u)); width: calc(520 * var(--u)); }
+.pieza-web { left: calc(1340 * var(--u)); top: calc(680 * var(--u)); width: calc(520 * var(--u)); }
+.foto { position: absolute; border-radius: 4px; }
+.foto-rack {
+  right: calc(-80 * var(--u)); top: calc(120 * var(--u)); width: calc(900 * var(--u)); height: calc(860 * var(--u));
+  object-fit: cover; opacity: 0.22; filter: blur(calc(6 * var(--u))) saturate(0.7);
+}
+
+/* ---------- 5. Sesión ---------- */
+.t-sesion { left: calc(860 * var(--u)); top: calc(150 * var(--u)); width: calc(960 * var(--u)); }
+.rotulos { left: calc(860 * var(--u)); top: calc(560 * var(--u)); list-style: none; display: grid; gap: calc(18 * var(--u)); }
+.rotulo {
+  font-family: var(--f-texto); font-weight: 600; font-size: calc(64 * var(--u)); line-height: 1.1;
+  color: var(--niebla); opacity: 0; transform: translateY(calc(24 * var(--u)));
+  transition: opacity 0.4s var(--entrada), transform 0.4s var(--entrada), color 0.4s var(--entrada);
+}
+.rotulo.visto { opacity: 1; transform: none; }
+.rotulo.ahora { color: var(--hueso); }
+.rotulo-final { font-family: var(--f-cond); font-style: italic; font-weight: 800; font-size: calc(150 * var(--u)); line-height: 1; }
+.rotulo-final.ahora { color: var(--hueso); }
+
+/* ---------- 6. Alimentos: naranja a sangre ---------- */
+.fondo-naranja { background: var(--naranja); }
+.foto-bol {
+  right: calc(-40 * var(--u)); top: calc(-80 * var(--u)); width: calc(620 * var(--u)); height: calc(560 * var(--u));
+  object-fit: cover; filter: blur(calc(12 * var(--u))) saturate(0.8); opacity: 0.45;
+  -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
+}
+.escena-naranja .titular, .escena-naranja .texto, .escena-naranja .cifra { color: var(--grafito); }
+.escena-naranja .etiqueta, .escena-naranja .credito, .escena-naranja .contador, .escena-naranja .margen { color: var(--grafito); }
+.t-alimentos { left: var(--margen-x); top: var(--margen-y); width: calc(1150 * var(--u)); }
+.cifra-198 { left: calc(132 * var(--u)); top: calc(380 * var(--u)); font-size: calc(300 * var(--u)); }
+.a-198 { left: var(--margen-x); top: calc(670 * var(--u)); width: calc(1100 * var(--u)); }
+.fuentes { left: var(--margen-x); top: calc(760 * var(--u)); width: calc(1100 * var(--u)); }
+
+/* ---------- 7. 403 ---------- */
+.t-403 { left: var(--margen-x); top: var(--margen-y); width: calc(1632 * var(--u)); }
+.peticion { left: var(--margen-x); top: calc(520 * var(--u)); width: calc(700 * var(--u)); }
+.respuesta-et { left: var(--margen-x); top: calc(700 * var(--u)); color: var(--niebla); }
+.cifra-403 { right: var(--margen-x); top: calc(330 * var(--u)); font-size: calc(520 * var(--u)); color: var(--hueso); }
+.prohibido {
+  right: var(--margen-x); top: calc(780 * var(--u));
+  font-family: var(--f-cond); font-weight: 800; font-size: calc(110 * var(--u)); line-height: 1; color: var(--naranja);
+}
+
+/* ---------- 8. Tests ---------- */
+.t-tests { left: var(--margen-x); top: var(--margen-y); width: calc(1632 * var(--u)); }
+.dato .cifra { color: var(--hueso); }
+.dato-tests { left: var(--margen-x); top: calc(400 * var(--u)); width: calc(900 * var(--u)); }
+.dato-tests .cifra { font-size: calc(330 * var(--u)); color: var(--dorado); margin: calc(8 * var(--u)) 0 calc(20 * var(--u)); }
+.dato-versiones { left: calc(1150 * var(--u)); top: calc(400 * var(--u)); width: calc(640 * var(--u)); }
+.dato-decisiones { left: calc(1150 * var(--u)); top: calc(640 * var(--u)); width: calc(640 * var(--u)); }
+.dato-versiones .cifra, .dato-decisiones .cifra { font-size: calc(170 * var(--u)); margin-bottom: calc(8 * var(--u)); }
+
+/* ---------- 9. Cierre ---------- */
+.recap { left: calc(800 * var(--u)); top: calc(300 * var(--u)); width: calc(980 * var(--u)); color: var(--niebla); }
+.t-cierre { left: calc(800 * var(--u)); top: calc(470 * var(--u)); width: calc(1000 * var(--u)); font-size: calc(128 * var(--u)); }
+.logo-g { left: calc(800 * var(--u)); top: calc(780 * var(--u)); width: calc(130 * var(--u)); height: auto; }
+
+/* ---------- Movimiento reducido: cada escena es una pantalla con su estado final ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .slide { height: 100vh; }
+  .rotulo { opacity: 1; transform: none; transition: none; }
+  .rotulo-final { color: var(--hueso); }
+}

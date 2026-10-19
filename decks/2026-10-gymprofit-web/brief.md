@@ -13,5 +13,5 @@ Que el público vea que GymProFit no se quedó en trabajo de clase.
 «Un proyecto de clase llevado como un producto de verdad».
 
 ## Formato y material
-Web en proyector y demo en vivo con el móvil (scrcpy por USB). Sin capturas de la app.
+Web de scroll en proyector, con las grabaciones reales de la app dentro de un móvil 3D, y demo en vivo con el móvil (scrcpy por USB) en la escena 3.
 Datos del repo de GymProFit a 14-10-2026. Logo y fuentes de la propia app.

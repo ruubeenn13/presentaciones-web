@@ -6,7 +6,10 @@
     "nuevo-deck": "node scripts/nuevo-deck.mjs",
     "render": "node scripts/render.mjs",
     "pdf": "node scripts/pdf.mjs",
-    "build-site": "node scripts/build-site.mjs"
+    "build-site": "node scripts/build-site.mjs",
+    "build-decks": "node scripts/build-decks.mjs",
+    "presentar": "node scripts/presentar.mjs",
+    "recorrido": "node scripts/recorrido.mjs"
   },
   "engines": {
     "node": ">=20"

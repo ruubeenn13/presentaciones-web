@@ -1,5 +1,6 @@
 // Utilidades compartidas por render.mjs y pdf.mjs: localizar el deck,
 // servirlo por HTTP y capturar cada diapositiva a 1920x1080 con Playwright.
+import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { existsSync, readdirSync } from 'node:fs';
@@ -45,25 +46,71 @@ export function fail(msg) {
   process.exit(1);
 }
 
+/** Un deck web es un proyecto con package.json (Vite): se presenta desde su versión construida en dist/. */
 /**
- * Sirve un directorio por HTTP en un puerto libre (rutas relativas y fuentes locales funcionan igual que en Pages).
+ * Ejecuta npm en un directorio (en Windows, npm es un .cmd y necesita la shell).
+ * @param {string} cwd directorio
+ * @param {string[]} args argumentos de npm
+ */
+export function npmEn(cwd, args) {
+  return process.platform === 'win32'
+    ? spawnSync(`npm ${args.join(' ')}`, { cwd, stdio: 'inherit', shell: true })
+    : spawnSync('npm', args, { cwd, stdio: 'inherit' });
+}
+
+export const esWeb = (deckDir) => existsSync(join(deckDir, 'package.json'));
+
+/**
+ * Devuelve el directorio que hay que servir. Para un deck web, instala sus dependencias si faltan
+ * y lo construye (npm run build), para que render, pdf y presentar usen siempre la versión publicada.
+ * @param {string} deckDir ruta absoluta del deck
+ * @returns {string} deckDir, o deckDir/dist si es un deck web
+ */
+export function prepararDeck(deckDir) {
+  if (!esWeb(deckDir)) return deckDir;
+  const npm = (args) => {
+    const r = npmEn(deckDir, args);
+    if (r.status !== 0) fail(`npm ${args.join(' ')} falló en ${deckDir}`);
+  };
+  if (!existsSync(join(deckDir, 'node_modules'))) npm(['ci', '--ignore-scripts']); // sin descargar ffmpeg: solo hace falta para editar tomas
+  npm(['run', 'build', '--silent']);
+  return join(deckDir, 'dist');
+}
+
+/**
+ * Sirve un directorio por HTTP (rutas relativas y fuentes locales funcionan igual que en Pages).
+ * Atiende peticiones Range para que los vídeos se puedan reproducir y saltar como en Pages.
  * @param {string} dir directorio raíz
+ * @param {number} [port] puerto fijo; por defecto, uno libre
  * @returns {Promise<{url: string, close: () => void}>}
  */
-export async function serve(root) {
+export async function serve(root, port = 0) {
   const dir = resolve(root);
   const server = createServer(async (req, res) => {
     try {
       let path = join(dir, decodeURIComponent(new URL(req.url, 'http://x').pathname));
       if (!path.startsWith(dir + sep) && path !== dir) throw new Error('fuera');
       if ((await stat(path)).isDirectory()) path = join(path, 'index.html');
-      res.writeHead(200, { 'Content-Type': MIME[extname(path).toLowerCase()] ?? 'application/octet-stream' });
-      res.end(await readFile(path));
+      const type = MIME[extname(path).toLowerCase()] ?? 'application/octet-stream';
+      const body = await readFile(path);
+      const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '');
+      if (range) {
+        const start = range[1] ? Number(range[1]) : body.length - Number(range[2]);
+        const end = range[1] && range[2] ? Math.min(Number(range[2]), body.length - 1) : body.length - 1;
+        res.writeHead(206, {
+          'Content-Type': type, 'Accept-Ranges': 'bytes',
+          'Content-Range': `bytes ${start}-${end}/${body.length}`, 'Content-Length': end - start + 1,
+        });
+        res.end(body.subarray(start, end + 1));
+        return;
+      }
+      res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Content-Length': body.length });
+      res.end(body);
     } catch {
       res.writeHead(404).end();
     }
   });
-  await new Promise((ok) => server.listen(0, '127.0.0.1', ok));
+  await new Promise((ok) => server.listen(port, '127.0.0.1', ok));
   return { url: `http://127.0.0.1:${server.address().port}/`, close: () => server.close() };
 }
 
@@ -74,7 +121,7 @@ export async function serve(root) {
  * @returns {Promise<number>} número de diapositivas
  */
 export async function eachSlide(deckDir, onSlide) {
-  const { url, close } = await serve(deckDir);
+  const { url, close } = await serve(prepararDeck(deckDir));
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });

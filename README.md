@@ -71,6 +71,23 @@ La [página principal](https://ruubeenn13.github.io/presentaciones-web/) lista t
 </details>
 
 <details>
+<summary><b>Decks web</b>: una web de scroll en vez de diapositivas</summary>
+<br>
+
+Un deck también puede ser una web de scroll hecha con Vite, con un modelo 3D (Three.js), animaciones guiadas por el scroll (GSAP y Lenis) y vídeos reales. Lo que lo distingue es que tiene su propio `package.json`. El primero es [`decks/2026-10-gymprofit-web`](decks/2026-10-gymprofit-web).
+
+Sigue el mismo flujo y las mismas reglas, con cuatro diferencias:
+
+- Cada escena es una `<section class="slide">`. Al ponerle `.active`, salta a su estado final, así que render, pdf y el crítico funcionan igual que con un deck de diapositivas. Lo hacen con movimiento reducido: cada escena es una pantalla con un fotograma fijo en vez del vídeo.
+- Render, pdf y presentar construyen el deck antes (`npm run build` dentro de él) y usan esa versión, la misma que se publica.
+- `npm run recorrido -- <deck>` graba un recorrido completo con movimiento normal en `renders/recorrido.webm`, para revisar las transiciones y los vídeos.
+- Para presentar sin internet: `npm run presentar -- <deck>`. Construye el deck, lo sirve en `http://127.0.0.1:4321/` y abre el navegador.
+
+Las grabaciones originales van en `grabaciones/` y no se suben. En `public/video/` solo van las editadas.
+
+</details>
+
+<details>
 <summary><b>El crítico</b>: por qué revisa alguien que no ha visto nada</summary>
 <br>
 
@@ -108,7 +125,8 @@ La lista completa está en la skill: [`.claude/skills/presentaciones/SKILL.md`](
 decks/
   _plantilla/             lo que copia nuevo-deck
   AAAA-MM-tema/           brief.md · guion.md · design.md · index.html · assets/ · renders/ · PDF
-scripts/                  nuevo-deck, render, pdf y build-site (Node + Playwright)
+  AAAA-MM-tema-web/       igual, más package.json, src/, public/ y dist/ (construido, sin subir)
+scripts/                  nuevo-deck, render, pdf, recorrido, presentar, build-decks y build-site
 site/                     página principal de GitHub Pages
 docs/                     deck de muestra e imágenes de este README
 .claude/
@@ -122,6 +140,9 @@ docs/                     deck de muestra e imágenes de este README
 | `npm run nuevo-deck -- "Tema"` | Copia la plantilla con la fecha y el nombre |
 | `npm run render -- <deck>` | Captura cada diapositiva y falla si hay desbordes o texto cortado |
 | `npm run pdf -- <deck>` | Exporta el PDF de respaldo |
+| `npm run recorrido -- <deck>` | Graba un recorrido con movimiento normal (decks web) |
+| `npm run presentar -- <deck>` | Sirve el deck construido sin internet y abre el navegador |
+| `npm run build-decks` | Construye los decks web (`npm ci` y `npm run build` en cada uno) |
 | `npm run build-site` | Monta la web con un índice y una carpeta por deck |
 
 </details>
@@ -138,7 +159,7 @@ Cada deck tiene su propia paleta y sus tipografías; esta es solo una muestra.
 
 ## Hecho con
 
-HTML, CSS y JavaScript sin dependencias en cada presentación, Node.js y Playwright para capturas, comprobaciones y PDF, Claude Code con frontend-slides, una skill y un subagente propios, y GitHub Actions con GitHub Pages para publicar.
+HTML, CSS y JavaScript sin dependencias en cada presentación (Vite, Three.js, GSAP y Lenis en los decks web), Node.js y Playwright para capturas, comprobaciones y PDF, Claude Code con frontend-slides, una skill y un subagente propios, y GitHub Actions con GitHub Pages para publicar.
 
 ---
 

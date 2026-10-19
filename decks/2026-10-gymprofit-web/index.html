@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GymProFit: de proyecto de clase a producto</title>
+  <meta name="description" content="Web de scroll para presentar GymProFit en 10 minutos, con la app real en un móvil 3D.">
+  <link rel="icon" href="logo-g.svg" type="image/svg+xml">
+  <!-- Fuentes locales (public/fonts): se resuelven respecto a la página, así funcionan sin internet y en Pages. -->
+  <style>
+    @font-face { font-family: 'Barlow'; font-weight: 500; font-display: block; src: url('fonts/barlow-500.woff2') format('woff2'); }
+    @font-face { font-family: 'Barlow'; font-weight: 600; font-display: block; src: url('fonts/barlow-600.woff2') format('woff2'); }
+    @font-face { font-family: 'Barlow Condensed'; font-weight: 700; font-display: block; src: url('fonts/barlow-condensed-700.woff2') format('woff2'); }
+    @font-face { font-family: 'Barlow Condensed'; font-weight: 800; font-display: block; src: url('fonts/barlow-condensed-800.woff2') format('woff2'); }
+    @font-face { font-family: 'Barlow Condensed'; font-weight: 800; font-style: italic; font-display: block; src: url('fonts/barlow-condensed-800-italic.woff2') format('woff2'); }
+    @font-face { font-family: 'Barlow Condensed'; font-weight: 900; font-display: block; src: url('fonts/barlow-condensed-900.woff2') format('woff2'); }
+  </style>
+</head>
+<body>
+  <!-- Capa 0: fondos que van por detrás del móvil (palabra gigante, naranja a sangre, fotos en profundidad). -->
+  <div id="fondos" aria-hidden="true">
+    <div class="fondo" data-escena="1"><div class="lienzo"><p class="gigante gigante-detras">GymProFit</p></div></div>
+    <div class="fondo" data-escena="4"><div class="lienzo">
+      <img class="foto foto-rack" src="fotos/rack-sentado.webp" alt="">
+    </div></div>
+    <div class="fondo fondo-naranja" data-escena="6"><div class="lienzo">
+      <img class="foto foto-bol" src="fotos/bol-salmon.webp" alt="">
+    </div></div>
+  </div>
+
+  <!-- Capa 1: el estudio 3D con el móvil. -->
+  <canvas id="estudio" aria-hidden="true"></canvas>
+
+  <!-- Capa 2: las escenas. Cada una es una diapositiva; con .active va a su estado final. -->
+  <main id="escenas">
+
+    <section class="slide" id="escena-1" aria-label="GymProFit: un proyecto de clase llevado como un producto de verdad">
+      <div class="escena"><div class="lienzo">
+        <h1 class="portada">
+          <span class="gigante gigante-delante">GymProFit</span>
+          <span class="portada-sub">un proyecto de clase llevado como un producto de verdad</span>
+        </h1>
+        <p class="margen">Rubén, octubre de 2026</p>
+        <p class="contador">1 de 9</p>
+      </div></div>
+      <!-- Hola, soy Rubén. Os voy a enseñar GymProFit, una app para entrenar, comer bien y ver tu progreso. Empezó como mi TFG de DAM y la he seguido llevando como un producto de verdad. Primero la veréis funcionar y luego os cuento lo que no se ve. (15 s) -->
+    </section>
+
+    <section class="slide" id="escena-2" aria-label="Commits antes y después del TFG">
+      <div class="escena"><div class="lienzo">
+        <h2 class="titular t-commits"><span class="linea"><span>Tras entregar el TFG, hice</span></span> <span class="linea"><span>seis veces más commits que</span></span> <span class="linea"><span>mientras lo hacía</span></span></h2>
+        <div class="grafico" role="img" aria-label="Commits por mes: febrero 6, marzo 19, abril 25, mayo 53, junio 0, julio 168, agosto 0, septiembre 276, octubre 201 hasta el día 14">
+          <div class="grupo grupo-tfg"><span class="cifra total">103</span><span class="etiqueta">durante el TFG</span></div>
+          <div class="grupo grupo-despues"><span class="cifra total">645</span><span class="etiqueta">después</span></div>
+          <div class="barras">
+            <div class="barra tfg" style="--v:6"><span class="valor">6</span><span class="mes">feb</span></div>
+            <div class="barra tfg" style="--v:19"><span class="valor">19</span><span class="mes">mar</span></div>
+            <div class="barra tfg" style="--v:25"><span class="valor">25</span><span class="mes">abr</span></div>
+            <div class="barra tfg" style="--v:53"><span class="valor">53</span><span class="mes">may</span></div>
+            <div class="barra cero" style="--v:0"><span class="valor">0</span><span class="mes">jun</span></div>
+            <div class="barra despues" style="--v:168"><span class="valor">168</span><span class="mes">jul</span></div>
+            <div class="barra cero" style="--v:0"><span class="valor">0</span><span class="mes">ago</span></div>
+            <div class="barra despues" style="--v:276"><span class="valor">276</span><span class="mes">sep</span></div>
+            <div class="barra despues" style="--v:201"><span class="valor">201</span><span class="mes">oct</span></div>
+          </div>
+        </div>
+        <p class="margen">commits hasta el 14-10-2026</p>
+        <p class="contador">2 de 9</p>
+      </div></div>
+      <!-- Un commit es un cambio guardado en el código. De febrero a mayo, mientras hacía el TFG, hice 103. Lo entregué y, de julio a mediados de octubre, 645: seis veces más, y eso que junio y agosto están en blanco. Lo normal es que un trabajo de clase acabe con la nota. Este no acabó. (55 s) -->
+    </section>
+
+    <section class="slide" id="escena-3" aria-label="El alta">
+      <div class="escena"><div class="lienzo">
+        <h2 class="titular t-alta"><span class="linea"><span>En un minuto tienes</span></span> <span class="linea"><span>tu programa y tus</span></span> <span class="linea"><span>calorías del día</span></span></h2>
+        <p class="texto apoyo a-alta">Es la app real, versión 1.6.8.</p>
+        <p class="margen">demo en vivo</p>
+        <p class="contador">3 de 9</p>
+      </div></div>
+      <!-- La app te pregunta tu objetivo, tu nivel, tus datos, dónde entrenas y cuántos días, y en un minuto te da un programa de entreno y tus calorías y macros del día. Es la misma frase con la que te recibe la app. Mejor que contarlo, os lo enseño. DEMO de 3 min con una cuenta de prueba nueva: el alta y el plan (1 min); empezar la sesión, apuntar una serie y ver el descanso (1 min); buscar un producto y añadirlo con el «+» (1 min). Plan B si falla la red: la toma del alta sigue en pantalla; cuéntalo sobre ella. Refleja el móvil con scrcpy por USB, que no depende del wifi. (220 s) -->
+    </section>
+
+    <section class="slide" id="escena-4" aria-label="Las cuatro piezas">
+      <div class="escena"><div class="lienzo">
+        <h2 class="titular t-piezas"><span class="linea"><span>Detrás del móvil hay cuatro</span></span> <span class="linea"><span>piezas en producción</span></span></h2>
+        <svg class="trazos" viewBox="0 0 1920 1080" aria-hidden="true">
+          <path class="trazo" d="M 440 600 C 580 600, 640 600, 760 600" />
+          <path class="trazo" d="M 1050 560 C 1180 520, 1200 410, 1320 400" />
+          <path class="trazo" d="M 1050 640 C 1250 640, 1180 760, 1320 760" />
+        </svg>
+        <p class="pieza pieza-app"><span class="pieza-nombre">App</span><span class="etiqueta">Android</span></p>
+        <p class="pieza pieza-api"><span class="pieza-nombre">API</span><span class="etiqueta">api.gymprofit.app</span><span class="etiqueta">en Render, datos en</span><span class="etiqueta">MySQL (Aiven)</span></p>
+        <p class="pieza pieza-panel"><span class="pieza-nombre">Panel</span><span class="etiqueta">catálogo y usuarios</span><span class="etiqueta">en Cloudflare</span></p>
+        <p class="pieza pieza-web"><span class="pieza-nombre">Web</span><span class="etiqueta">privacidad y términos</span><span class="etiqueta">en Cloudflare</span></p>
+        <p class="margen">foto: Kobe Kian Clata, Unsplash</p>
+        <p class="contador">4 de 9</p>
+      </div></div>
+      <!-- Lo que habéis visto es solo una de las cuatro piezas. La app habla con una API en api.gymprofit.app, que guarda los datos en una base de datos MySQL. Hay un panel para gestionar el catálogo y los usuarios, y una web con la privacidad y los términos. En el TFG todo vivía en dos servidores EC2 de AWS; hoy la API está en Render, la base de datos en Aiven y el panel y la web en Cloudflare. La API cabe en 512 MB: cuando empezó a caerse por memoria, medí cada parte y el pico bajó de 501 a 438 MB. (50 s) -->
+    </section>
+
+    <section class="slide" id="escena-5" aria-label="La serie sobrevive">
+      <div class="escena"><div class="lienzo">
+        <h2 class="titular t-sesion"><span class="linea"><span>Aunque Android cierre</span></span> <span class="linea"><span>la app, no se pierde</span></span> <span class="linea"><span>ni una serie</span></span></h2>
+        <ol class="rotulos">
+          <li class="rotulo" data-desde="5.2">Serie apuntada</li>
+          <li class="rotulo" data-desde="10.6">Android cierra la app</li>
+          <li class="rotulo rotulo-final" data-desde="12.9">intacta</li>
+        </ol>
+        <p class="margen">toma real: el proceso muere y vuelve</p>
+        <p class="contador">5 de 9</p>
+      </div></div>
+      <!-- Android cierra las apps en segundo plano cuando le falta memoria, y en mitad de un entreno pasa. Por eso la sesión se escribe en el disco con cada cambio: si el sistema la cierra, al volver está todo, serie por serie. Lo que veis es real: apunto una serie, salgo, mato el proceso de la app y, al abrirla, la serie sigue ahí y el descanso sigue contando. Y el descanso suena con una alarma exacta aunque la pantalla esté apagada. (50 s) -->
+    </section>
+
+    <section class="slide escena-naranja" id="escena-6" aria-label="El índice de alimentos">
+      <div class="escena"><div class="lienzo">
+        <h2 class="titular t-alimentos"><span class="linea"><span>Buscar un alimento ya</span></span> <span class="linea"><span>no depende de nadie</span></span></h2>
+        <p class="cifra cifra-198" data-cuenta="198000">198.000</p>
+        <p class="texto a-198">productos en un índice propio</p>
+        <p class="texto fuentes">de Open Food Facts y alimentos básicos</p>
+        <p class="margen">foto: Davey Gravy, Unsplash</p>
+        <p class="contador">6 de 9</p>
+      </div></div>
+      <!-- Al principio, cada letra que escribías se consultaba a Open Food Facts, una base de datos abierta. Solo deja 10 búsquedas por minuto por dirección, y todos los usuarios salían por la misma: con pocos a la vez, la búsqueda se caía para todos. Ahora la API tiene su propio índice en memoria con 198.000 productos de España y cientos de alimentos básicos. En las pruebas en local responde en 24 milisegundos, y se actualiza sola cada semana. (55 s) -->
+    </section>
+
+    <section class="slide" id="escena-7" aria-label="403">
+      <div class="escena"><div class="lienzo">
+        <h2 class="titular t-403"><span class="linea"><span>Nadie ve los datos de otro, y un</span></span> <span class="linea"><span>test lo comprueba en cada ruta</span></span></h2>
+        <p class="texto peticion">Pides la sesión de otro usuario.</p>
+        <p class="texto respuesta-et">La API responde:</p>
+        <p class="cifra cifra-403">403</p>
+        <p class="prohibido">Prohibido</p>
+        <p class="contador">7 de 9</p>
+      </div></div>
+      <!-- Si alguien pide los datos de otro usuario, la API responde 403: prohibido. Quién eres sale siempre de tu sesión, nunca de lo que diga la app. Cada ruta que recibe un identificador nace con un test que intenta leer datos ajenos y comprueba que no puede. Ni siquiera una cuenta de administrador ve tus datos, y si borras la cuenta, se borra todo en el momento. (50 s) -->
+    </section>
+
+    <section class="slide" id="escena-8" aria-label="Tests">
+      <div class="escena"><div class="lienzo">
+        <h2 class="titular t-tests"><span class="linea"><span>La API solo llega a producción</span></span> <span class="linea"><span>si pasan todos los tests</span></span></h2>
+        <div class="dato dato-tests"><p class="etiqueta">más de</p><p class="cifra" data-cuenta="1100">1.100</p><p class="texto">tests antes de cada despliegue</p></div>
+        <div class="dato dato-versiones"><p class="cifra" data-cuenta="26">26</p><p class="texto">versiones</p></div>
+        <div class="dato dato-decisiones"><p class="cifra" data-cuenta="49">49</p><p class="texto">decisiones escritas con su porqué</p></div>
+        <p class="contador">8 de 9</p>
+      </div></div>
+      <!-- Nada de esto vale si se rompe al cambiarlo. Cada cambio va en su rama, pasa más de 1.100 tests y solo entonces la API se despliega sola. Luego lo pruebo en producción con cuentas de prueba que después borro. Van 26 versiones, y cada decisión importante está escrita con su porqué y lo que la haría cambiar: 49 hasta hoy. (45 s) -->
+    </section>
+
+    <section class="slide" id="escena-9" aria-label="Cierre">
+      <div class="escena"><div class="lienzo">
+        <p class="texto recap">Empezó como un TFG y hoy funciona en producción.</p>
+        <h2 class="titular t-cierre"><span class="linea"><span>Simple por fuera,</span></span> <span class="linea"><span>potente por dentro</span></span></h2>
+        <img class="logo-g" src="logo-g.svg" alt="GymProFit">
+        <p class="contador">9 de 9</p>
+      </div></div>
+      <!-- Empezó como un TFG y hoy funciona en producción, con un grupo de gente probándola. Si os quedáis con una frase, que sea la segunda decisión que escribí para el proyecto: simple por fuera, potente por dentro. Gracias. (30 s) -->
+    </section>
+
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
