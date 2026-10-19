@@ -16,3 +16,10 @@ CLAUDE.local.md
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Vídeos de referencia y grabaciones originales (no se suben; en public/video/ van las editadas)
+referencias/
+grabaciones/
+
+# Salida de los decks web (la construye el workflow)
+decks/*/dist/
