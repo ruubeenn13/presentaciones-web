@@ -62,15 +62,18 @@ detrás de él; el scroll mueve la cámara, no dispara animaciones. Cada secció
 ## Componentes
 - **Móvil 3D** (Three.js): cuerpo procedural de cantos redondeados, marco de aluminio PBR,
   botones en el canto, isla de cámaras con tres lentes y pantalla 9:20 con `VideoTexture` de las
-  grabaciones reales. Iluminación HDRI de Poly Haven (`studio_small_09`, CC0), un foco de borde
-  (naranja; dorado en el cierre) y una sombra de contacto en el suelo del estudio.
+  grabaciones reales. Aluminio grafito satinado (rugosidad 0,55, poco reflejo del HDRI) para que
+  se vea igual en todas las escenas. Iluminación HDRI de Poly Haven (`studio_small_09`, CC0), dos
+  focos rasantes que solo tocan los cantos (naranja; dorado en el cierre) y una sombra de contacto.
 - **Poses**: en reposo, siempre de cara (giro ≤ 0,15 rad) para que la toma se lea. Entre escenas
-  da una vuelta completa con el scroll, enseñando canto y espalda, y la cámara se acerca a mitad
-  de camino. En las escenas 2, 7 y 8 sale de cuadro. La pantalla solo cambia cuando no se ve
-  (fuera de cuadro o de espaldas).
+  se pone de canto (90°), cambia la pantalla mientras no se ve y vuelve de cara; el sentido se
+  alterna. En las escenas 2, 7 y 8 sale de cuadro. La vuelta entera es solo de la portada.
 - **Primeros planos**: sincronizados con el vídeo, la cámara se acerca a la parte de la pantalla
   que importa y el texto de la escena se aparta: «Tu plan» (escena 3), las series al volver la
   app (5) y el anillo de 734 a 1.033 kcal (6). Después vuelve al plano general.
+- **Tomas**: la del alta (escena 3) va en bucle, porque es el plan B de la demo. La sesión (5) y el
+  alimento (6) se reproducen una vez y se quedan en el último fotograma: plano general, los tres
+  rótulos a la vista y el anillo en 1.033. Se habla unos 50 s en cada una.
 - **Palabra gigante**: «GymProFit» entera detrás del canvas 3D; el móvil, delante y abajo, solo
   tapa la parte baja de las letras del centro, así la palabra se lee entera.
 - **Revelado por máscara**: las líneas suben desde un `clip-path`, guiadas por el scroll.
@@ -87,10 +90,10 @@ detrás de él; el scroll mueve la cámara, no dispara animaciones. Cada secció
 - Todo con scrub (ScrollTrigger + Lenis): el scroll es la línea de tiempo. Escenas fijadas.
 - Un solo momento destacado, en la portada: con la primera tecla o el primer scroll (no al
   cargar, para que lo vea el público), el móvil sale de la oscuridad dando media vuelta, con el
-  foco barriendo el canto, y se queda delante de la palabra.
+  foco barriendo el canto, y se queda delante de la palabra. Es la única vuelta entera.
 - Curvas: `power3.out` para entradas por máscara; `none` para lo que sigue al scroll.
 - Teclado: espacio, → y Av Pág van a la escena siguiente; ←, Re Pág a la anterior (scroll suave
-  de 3 s, para que se vea el giro).
+  de 1,8 s).
 - `prefers-reduced-motion`: sin scrub ni 3D en movimiento; cada escena muestra su estado final.
 
 ## Imagen

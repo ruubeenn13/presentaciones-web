@@ -1,4 +1,4 @@
-// El estudio 3D: un móvil procedural iluminado con un HDRI de estudio y un foco de borde,
+// El estudio 3D: un móvil procedural iluminado con un HDRI de estudio y focos rasantes en los cantos,
 // con la pantalla en la proporción exacta de las tomas (9:20). Su pose se da en píxeles del
 // lienzo de 1920x1080, así el móvil y el texto comparten rejilla.
 import * as THREE from 'three';
@@ -60,22 +60,27 @@ export function crearEstudio(canvas) {
   const camara = new THREE.PerspectiveCamera(FOV, 1, 0.1, 100);
   camara.position.set(0, 0, DISTANCIA);
 
-  // Iluminación: HDRI de estudio (Poly Haven, CC0) para los reflejos, un foco de borde y un relleno.
+  // Iluminación: HDRI de estudio (Poly Haven, CC0) para los reflejos, dos focos rasantes que solo
+  // tocan los cantos (de lado, casi en el plano del móvil, nunca de frente a la espalda) y un relleno.
   const pmrem = new THREE.PMREMGenerator(renderer);
   const listo = new HDRLoader().loadAsync('hdri/studio_small_09_1k.hdr').then((hdr) => {
     escena.environment = pmrem.fromEquirectangular(hdr).texture;
     hdr.dispose();
   });
-  const borde = new THREE.SpotLight(0xff6a00, 0, 30, 0.5, 0.6, 0);
+  const bordes = [-1, 1].map((lado) => Object.assign(new THREE.SpotLight(0xff6a00, 0, 30, 0.45, 0.7, 0), { lado }));
   const relleno = new THREE.DirectionalLight(0xffffff, 0.35);
   relleno.position.set(2, 3, 5);
-  escena.add(borde, borde.target, relleno);
+  bordes.forEach((b) => escena.add(b, b.target));
+  escena.add(relleno);
 
   const movil = new THREE.Group();
   escena.add(movil);
 
-  // Cuerpo: aluminio grafito con reflejos del estudio.
-  const metal = new THREE.MeshPhysicalMaterial({ color: 0x3a3e46, metalness: 1, roughness: 0.28, clearcoat: 0.6, clearcoatRoughness: 0.2 });
+  // Cuerpo: aluminio grafito satinado. Rugoso y con poco reflejo del HDRI, para que se vea igual de
+  // grafito en todas las escenas; el color del foco solo aparece en los cantos.
+  const metal = new THREE.MeshPhysicalMaterial({
+    color: 0x2b2e34, metalness: 0.75, roughness: 0.55, envMapIntensity: 0.35, clearcoat: 0.2, clearcoatRoughness: 0.5,
+  });
   movil.add(new THREE.Mesh(new RoundedBoxGeometry(CUERPO.w, CUERPO.h, CUERPO.d, 8, CUERPO.r), metal));
 
   // Cristal frontal negro (marco de la pantalla) y pantalla con la toma.
@@ -104,7 +109,7 @@ export function crearEstudio(canvas) {
   };
   boton(0.55, 0.22); boton(0.22, 0.14);
   const isla = new THREE.Mesh(new RoundedBoxGeometry(0.44, 0.44, 0.03, 4, 0.09),
-    new THREE.MeshPhysicalMaterial({ color: 0x202228, metalness: 0.6, roughness: 0.3, clearcoat: 1 }));
+    new THREE.MeshPhysicalMaterial({ color: 0x1e2025, metalness: 0.5, roughness: 0.5, envMapIntensity: 0.35, clearcoat: 0.3 }));
   isla.position.set(-0.2, 0.74, -CUERPO.d / 2 - 0.012);
   movil.add(isla);
   const lenteMat = new THREE.MeshPhysicalMaterial({ color: 0x050608, metalness: 0.2, roughness: 0.05, clearcoat: 1 });
@@ -159,11 +164,14 @@ export function crearEstudio(canvas) {
     sombra.scale.set(CUERPO.w * escala * 1.7, 0.2 * escala, 1);
     sombra.material.opacity = 0.7 * pose.sombra;
 
-    // El foco de borde apunta al móvil desde atrás y abajo; el barrido lo pasa de un canto al otro.
-    borde.color.copy(color);
-    borde.position.set(movil.position.x + pose.barrido * 5 * escala, movil.position.y - 3 * escala, -3);
-    borde.target.position.copy(movil.position);
-    borde.intensity = 220 * pose.luz;
+    // Focos rasantes a cada lado, algo por detrás del plano del móvil: iluminan los cantos, no la
+    // espalda. El barrido sube el del lado hacia el que gira.
+    bordes.forEach((b) => {
+      b.color.copy(color);
+      b.position.set(movil.position.x + b.lado * 4 * escala, movil.position.y - 1.2 * escala, movil.position.z - 0.35 * escala);
+      b.target.position.copy(movil.position);
+      b.intensity = 45 * pose.luz * (1 + 0.6 * Math.max(0, b.lado * pose.barrido));
+    });
     escena.environmentIntensity = pose.ambiente;
     relleno.intensity = 0.35 * pose.ambiente;
   }

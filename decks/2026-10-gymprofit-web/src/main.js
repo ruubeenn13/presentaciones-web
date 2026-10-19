@@ -21,19 +21,19 @@ const BASE = { rz: 0, luz: 1, oro: 0, sombra: 1, ambiente: 1, barrido: 0, cam: 0
  * En reposo siempre de cara (giro pequeño) para que la toma se lea; fuera de cuadro cuando no toca.
  */
 const POSES = [
-  { x: 960, y: 760, h: 520, ry: -0.12, rx: 0.04 },               // 1 delante de la palabra, tapando su parte baja
+  { x: 1075, y: 770, h: 520, ry: -0.12, rx: 0.04 },               // 1 delante de la palabra, tapando su parte baja
   { x: 2550, y: 620, h: 600, ry: -0.3, rx: 0.04 },               // 2 fuera de cuadro: el gráfico manda
   { x: 1420, y: 525, h: 860, ry: -0.12, rx: 0.02 },              // 3 alta
   { x: 300, y: 560, h: 420, ry: 0.14, rx: 0.03, luz: 0.6 },      // 4 se encoge a un lado
   { x: 1240, y: 990, h: 1450, ry: -0.1, rx: 0.02 },              // 5 grande, cortado por abajo
-  { x: 1550, y: 540, h: 820, ry: -0.14, rx: 0.02, luz: 0 },      // 6 sobre el naranja
+  { x: 1550, y: 505, h: 780, ry: -0.14, rx: 0.02, luz: 0 },      // 6 sobre el naranja
   { x: 1550, y: 1950, h: 820, ry: -0.2, rx: 0.2, luz: 0, sombra: 0 }, // 7 fuera de cuadro
   { x: 470, y: 1950, h: 860, ry: 0.2, rx: 0.2, luz: 0, sombra: 0 },   // 8 fuera de cuadro
   { x: 470, y: 525, h: 860, ry: 0.12, rx: 0.02, oro: 1 },        // 9 cierre: la luz pasa a dorado
 ].map((p) => ({ ...BASE, ...p }));
 
-/** Vueltas completas en cada transición (i → i+1): el móvil gira de verdad y enseña canto y espalda. */
-const VUELTAS = [1, -1, 1, -1, 1, 0, 0, -1];
+/** Sentido del cuarto de vuelta en cada transición (i → i+1): el móvil se pone de canto y vuelve de cara. */
+const GIRO = [1, -1, 1, -1, 1, -1, 1, -1];
 
 /** Qué muestra la pantalla en cada escena: vídeo (se reproduce solo en su escena) o fotograma fijo. */
 const PANTALLAS = [
@@ -41,8 +41,9 @@ const PANTALLAS = [
   { imagen: 'video/alta-inicio.webp' },
   { video: 'video/alta.mp4', imagen: 'video/alta.webp', bucle: true },
   { imagen: 'video/alta.webp' },
-  { video: 'video/sesion.mp4', imagen: 'video/sesion.webp', bucle: true },
-  { video: 'video/alimento.mp4', imagen: 'video/alimento.webp', bucle: true },
+  // La 5 y la 6 se reproducen una vez y se quedan en el último fotograma: se habla ~50 s en cada una.
+  { video: 'video/sesion.mp4', imagen: 'video/sesion.webp', bucle: false },
+  { video: 'video/alimento.mp4', imagen: 'video/alimento.webp', bucle: false },
   { imagen: 'video/records.webp' },
   { imagen: 'video/records.webp' },
   { video: 'video/records.mp4', imagen: 'video/records.webp', bucle: false },
@@ -91,7 +92,7 @@ const mezcla = (a, b, t) => Object.fromEntries(Object.keys(a).map((k) => [k, a[k
 
 /**
  * Pose del móvil para una posición de scroll. Entre el reposo de una escena y la llegada a la siguiente
- * interpola, da las vueltas de VUELTAS, inclina el móvil y acerca la cámara a mitad de camino.
+ * interpola y se pone de canto (90°) a mitad de camino, que es cuando cambia la pantalla, y vuelve de cara.
  * @returns {{ pose: object, reposo: number, hacia: number }} reposo = escena en reposo o -1; hacia = escena cuya pantalla toca
  */
 function poseEn(y) {
@@ -99,17 +100,15 @@ function poseEn(y) {
   for (let i = 0; i < escenas.length - 1; i++) {
     if (y >= llegadas[i + 1]) continue;
     if (y <= reposos[i]) return { pose: { ...POSES[i] }, reposo: i, hacia: i };
-    // Posición con curva suave; el giro, lineal con el scroll, para que la vuelta se reparta en todo el tramo.
     const lin = (y - reposos[i]) / (llegadas[i + 1] - reposos[i]);
     const e = suave(lin);
     const p = mezcla(POSES[i], POSES[i + 1], e);
     const arco = Math.sin(Math.PI * lin);
-    p.ry += VUELTAS[i] * 2 * Math.PI * lin;
-    p.rx += arco * 0.3;
-    p.rz += arco * 0.08 * VUELTAS[i];
-    p.cam -= arco * 1.6;
-    p.barrido = arco * (VUELTAS[i] || 1);
-    return { pose: p, reposo: -1, hacia: e < 0.5 ? i : i + 1 };
+    p.ry += GIRO[i] * (Math.PI / 2) * arco;
+    p.rx += arco * 0.12;
+    p.cam -= arco * 0.8;
+    p.barrido = arco * GIRO[i];
+    return { pose: p, reposo: -1, hacia: lin < 0.5 ? i : i + 1 };
   }
   const n = escenas.length - 1;
   return { pose: { ...POSES[n] }, reposo: n, hacia: n };
@@ -119,7 +118,8 @@ const fueraDeCuadro = (p) => {
   const medioAncho = (p.h * CUERPO.w) / CUERPO.h / 2;
   return p.x + medioAncho < -40 || p.x - medioAncho > 1960 || p.y - p.h / 2 > 1120 || p.y + p.h / 2 < -40;
 };
-const deEspaldas = (p) => Math.cos(p.ry) * Math.cos(p.rx) < -0.1;
+/** De canto o de espaldas: la pantalla no se ve y se puede cambiar. */
+const sinPantalla = (p) => Math.cos(p.ry) * Math.cos(p.rx) < 0.2;
 
 /** Escena a la vista: la que ocupa el centro de la pantalla. */
 function escenaEn(y) {
@@ -141,13 +141,13 @@ function completarEntrada() {
   entrada.t = 1; entrada.lanzada = true;
   lenis?.start();
 }
-/** En la portada, antes de la entrada: de espaldas, abajo, a oscuras; el foco barre el canto al girar. */
+/** En la portada, antes de la entrada: abajo y a oscuras; sube dando la única vuelta entera de la charla, con el foco barriendo el canto. */
 function conEntrada(p) {
   const e = entrada.t;
   if (e >= 1) return p;
   return {
     ...p,
-    ry: p.ry + Math.PI * (1 - e),
+    ry: p.ry + 2 * Math.PI * (1 - e),
     y: p.y + 560 * (1 - e),
     h: p.h * (0.85 + 0.15 * e),
     ambiente: 0.02 + 0.98 * e,
@@ -221,8 +221,8 @@ function fotograma() {
   if (reposo >= 0) ({ pose, c } = conPrimerPlano(pose, reposo));
   escenas.forEach((s, i) => s.style.setProperty('--atenua', i === reposo ? c : 0));
 
-  // La pantalla solo cambia cuando no se ve: fuera de cuadro, de espaldas o en un salto directo al reposo.
-  if (!pantallaPuesta || reposo >= 0 || fueraDeCuadro(pose) || deEspaldas(pose)) {
+  // La pantalla solo cambia cuando no se ve: fuera de cuadro, de canto o en un salto directo al reposo.
+  if (!pantallaPuesta || reposo >= 0 || fueraDeCuadro(pose) || sinPantalla(pose)) {
     estudio.setPantalla(medios[hacia].pantalla);
     pantallaPuesta = true;
   }
@@ -235,8 +235,8 @@ function fotograma() {
 // ---------- Scroll suave y líneas de tiempo ----------
 function irA(n, inmediato = false) {
   const i = Math.max(0, Math.min(escenas.length - 1, n));
-  // 3 s con una curva sinusoidal: da tiempo a ver el giro y el canto del móvil entre escenas.
-  if (lenis && !inmediato) lenis.scrollTo(reposos[i], { duration: 3, easing: (t) => (1 - Math.cos(Math.PI * t)) / 2 });
+  // 1,8 s con una curva sinusoidal: se ve el móvil de canto sin hacer esperar al público.
+  if (lenis && !inmediato) lenis.scrollTo(reposos[i], { duration: 1.8, easing: (t) => (1 - Math.cos(Math.PI * t)) / 2 });
   else { lenis?.scrollTo(reposos[i], { immediate: true, force: true }); window.scrollTo(0, reposos[i]); }
 }
 
