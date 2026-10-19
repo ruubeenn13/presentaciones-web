@@ -80,7 +80,7 @@ Sigue el mismo flujo y las mismas reglas, con cuatro diferencias:
 
 - Cada escena es una `<section class="slide">`. Al ponerle `.active`, salta a su estado final, así que render, pdf y el crítico funcionan igual que con un deck de diapositivas. Lo hacen con movimiento reducido: cada escena es una pantalla con un fotograma fijo en vez del vídeo.
 - Render, pdf y presentar construyen el deck antes (`npm run build` dentro de él) y usan esa versión, la misma que se publica.
-- `npm run recorrido -- <deck>` graba un recorrido completo con movimiento normal en `renders/recorrido.webm`, para revisar las transiciones y los vídeos.
+- `npm run recorrido -- <deck>` graba un recorrido completo con movimiento normal en `renders/recorrido.webm`, avanzando con la barra espaciadora, para revisar las transiciones y los vídeos. Con `PAUSAS=6,6,26,…` se queda más en las escenas que lo necesiten; con `TAMANO=1366x768`, a otro tamaño, y con `VENTANA=1`, en una ventana normal del navegador.
 - Para presentar sin internet: `npm run presentar -- <deck>`. Construye el deck, lo sirve en `http://127.0.0.1:4321/` y abre el navegador.
 
 Las grabaciones originales van en `grabaciones/` y no se suben. En `public/video/` solo van las editadas.

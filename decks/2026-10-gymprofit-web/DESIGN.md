@@ -3,6 +3,7 @@
 Presentación en forma de web de scroll para proyector (1920×1080, escala a 16:10 y 4K).
 Se basa en la marca real de la app (colores y fuentes de `TFG-GymProFit`) y en los tres vídeos
 de referencia (reloj en estudio oscuro, bote a sangre en naranja, objetos flotando en un estudio).
+La vara de medir es la del reloj: objeto grande, giros que enseñan canto y espalda, y primeros planos.
 No se ha consultado UXKIN: la dirección sale de la marca y de esas referencias.
 
 ## Idea
@@ -19,7 +20,7 @@ detrás de él; el scroll mueve la cámara, no dispara animaciones. Cada secció
 | `--hueso` | #F2F2F3 | Titulares y texto principal (18,4:1 sobre grafito) |
 | `--niebla` | #A1A9B6 | Texto de apoyo, etiquetas, datos del TFG (8,1:1 sobre grafito) |
 | `--naranja` | #FF6A00 | Marca: luz de estudio, cifra protagonista, sección 6 a sangre |
-| `--dorado` | #E8B84B | Solo logros: récords de la app, tests en verde, la G del cierre |
+| `--dorado` | #E8B84B | Solo logros: récords de la app, cifra de tests, la G y la luz del cierre |
 | `--proteina` / `--carbos` / `--grasa` | #6BA6F5 / #E8A94B / #B295E8 | Solo en la escena 6, como en la app |
 
 - Sobre naranja el texto es grafito (7,0:1), nunca blanco (2,9:1).
@@ -60,29 +61,41 @@ detrás de él; el scroll mueve la cámara, no dispara animaciones. Cada secció
 
 ## Componentes
 - **Móvil 3D** (Three.js): cuerpo procedural de cantos redondeados, marco de aluminio PBR,
-  isla de cámara y pantalla con `VideoTexture` de las grabaciones reales. Iluminación HDRI de
-  Poly Haven (`studio_small_09`, CC0) más un foco naranja de borde.
-- **Palabra gigante con capas**: el mismo texto en dos capas, una detrás del canvas 3D y otra
-  delante recortada por máscara, para que el móvil quede «dentro» de la palabra.
+  botones en el canto, isla de cámaras con tres lentes y pantalla 9:20 con `VideoTexture` de las
+  grabaciones reales. Iluminación HDRI de Poly Haven (`studio_small_09`, CC0), un foco de borde
+  (naranja; dorado en el cierre) y una sombra de contacto en el suelo del estudio.
+- **Poses**: en reposo, siempre de cara (giro ≤ 0,15 rad) para que la toma se lea. Entre escenas
+  da una vuelta completa con el scroll, enseñando canto y espalda, y la cámara se acerca a mitad
+  de camino. En las escenas 2, 7 y 8 sale de cuadro. La pantalla solo cambia cuando no se ve
+  (fuera de cuadro o de espaldas).
+- **Primeros planos**: sincronizados con el vídeo, la cámara se acerca a la parte de la pantalla
+  que importa y el texto de la escena se aparta: «Tu plan» (escena 3), las series al volver la
+  app (5) y el anillo de 734 a 1.033 kcal (6). Después vuelve al plano general.
+- **Palabra gigante**: «GymProFit» entera detrás del canvas 3D; el móvil, delante y abajo, solo
+  tapa la parte baja de las letras del centro, así la palabra se lee entera.
 - **Revelado por máscara**: las líneas suben desde un `clip-path`, guiadas por el scroll.
 - **Contador**: cifra que cuenta con el scroll, con el ancho final reservado.
 - **Gráfico de commits**: barras por mes que crecen con el scroll; TFG en niebla, después en naranja.
-- **Esquema de piezas**: cuatro nodos de texto unidos por trazos que se dibujan.
+- **Esquema de piezas**: el móvil y, detrás, API, base de datos, panel y web, en texto. Trazos
+  como en el README de GymProFit: móvil → API, panel → API y API → base de datos; la web es
+  estática y va sin trazo.
 - **Etiqueta vertical de margen**: texto girado 90° en el borde izquierdo con el dato real de la
   escena (versión, dominio, fecha de los datos).
 - **Contador de escena** abajo a la derecha: «3 de 9». La charla es una secuencia, por eso se numera.
 
 ## Movimiento
 - Todo con scrub (ScrollTrigger + Lenis): el scroll es la línea de tiempo. Escenas fijadas.
+- Un solo momento destacado, en la portada: con la primera tecla o el primer scroll (no al
+  cargar, para que lo vea el público), el móvil sale de la oscuridad dando media vuelta, con el
+  foco barriendo el canto, y se queda delante de la palabra.
 - Curvas: `power3.out` para entradas por máscara; `none` para lo que sigue al scroll.
 - Teclado: espacio, → y Av Pág van a la escena siguiente; ←, Re Pág a la anterior (scroll suave
-  de 1,2 s).
+  de 3 s, para que se vea el giro).
 - `prefers-reduced-motion`: sin scrub ni 3D en movimiento; cada escena muestra su estado final.
 
 ## Imagen
-- Fotos reales de Unsplash, oscuras y con luz cálida, descargadas en `public/fotos/` con crédito
-  en `CREDITOS.md`: gimnasio a oscuras, discos, magnesio, comida real.
-- Se usan grandes y en profundidad (escena 4 y escena 6), nunca como icono ni en rejilla de tarjetas.
+- Sin fotos de archivo: la única imagen es la app real dentro del móvil. Las fotos de Unsplash
+  que se probaron en las escenas 4 y 6 no se veían y se quitaron.
 - Iconos: ninguno. El logo es `logo-g.svg` (la G de la app).
 
 ## Prohibido en esta web

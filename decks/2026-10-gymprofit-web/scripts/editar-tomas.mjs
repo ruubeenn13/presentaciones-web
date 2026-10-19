@@ -41,7 +41,10 @@ const TOMAS = [
   },
   {
     nombre: 'alimento',
-    tramos: [[1.5, 16, 1], [24.6, null, 1]],
+    // El anillo salta de 734 a 1.033 en un par de fotogramas (screenrecord graba a pocos fps):
+    // ese tramo va a 0,35 para que se vea moverse. No se inventan fotogramas, se alargan.
+    tramos: [[2.2, 16, 1], [24.6, 28, 1], [28, 28.8, 0.35], [28.8, null, 1]],
+    pausaFinal: 1.5,
     claves: { alimento: 'fin' },
   },
   {

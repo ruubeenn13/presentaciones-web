@@ -33,7 +33,7 @@ docs/                    # deck de muestra y capturas del README; no se publica
 | `npm run pdf -- <deck>` | `decks/<deck>/<deck>.pdf`, una página por diapositiva |
 | `npm run build-decks` | `npm ci` + `npm run build` en cada deck web (lo usa el workflow de Pages) |
 | `npm run build-site` | Monta `_site/` (lo usa el workflow de Pages); de los decks web copia su `dist/` |
-| `npm run recorrido -- <deck>` | Graba un recorrido con movimiento normal en `renders/recorrido.webm` (decks web) |
+| `npm run recorrido -- <deck>` | Graba un recorrido con movimiento normal en `renders/recorrido.webm` (decks web). Opciones: `PAUSA`, `PAUSAS=6,6,26,…`, `TAMANO=1366x768`, `VENTANA=1` |
 | `npm run presentar -- <deck>` | Construye si hace falta, sirve sin internet en `http://127.0.0.1:4321/` y abre el navegador |
 
 ## Decks web (con package.json)

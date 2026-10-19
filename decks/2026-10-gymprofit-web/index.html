@@ -17,15 +17,10 @@
   </style>
 </head>
 <body>
-  <!-- Capa 0: fondos que van por detrás del móvil (palabra gigante, naranja a sangre, fotos en profundidad). -->
+  <!-- Capa 0: fondos que van por detrás del móvil (la palabra de la portada y el naranja a sangre). -->
   <div id="fondos" aria-hidden="true">
-    <div class="fondo" data-escena="1"><div class="lienzo"><p class="gigante gigante-detras">GymProFit</p></div></div>
-    <div class="fondo" data-escena="4"><div class="lienzo">
-      <img class="foto foto-rack" src="fotos/rack-sentado.webp" alt="">
-    </div></div>
-    <div class="fondo fondo-naranja" data-escena="6"><div class="lienzo">
-      <img class="foto foto-bol" src="fotos/bol-salmon.webp" alt="">
-    </div></div>
+    <div class="fondo" data-escena="1"><div class="lienzo"><p class="gigante">GymProFit</p></div></div>
+    <div class="fondo fondo-naranja" data-escena="6"></div>
   </div>
 
   <!-- Capa 1: el estudio 3D con el móvil. -->
@@ -34,13 +29,10 @@
   <!-- Capa 2: las escenas. Cada una es una diapositiva; con .active va a su estado final. -->
   <main id="escenas">
 
-    <section class="slide" id="escena-1" aria-label="GymProFit: un proyecto de clase llevado como un producto de verdad">
+    <section class="slide" id="escena-1" aria-label="Portada">
       <div class="escena"><div class="lienzo">
-        <h1 class="portada">
-          <span class="gigante gigante-delante">GymProFit</span>
-          <span class="portada-sub">un proyecto de clase llevado como un producto de verdad</span>
-        </h1>
-        <p class="margen">Rubén, octubre de 2026</p>
+        <h1 class="portada-sub" aria-label="GymProFit: un proyecto de clase llevado como un producto de verdad">Un proyecto de clase llevado como un producto de verdad</h1>
+        <p class="margen">Rubén Juan Candela, octubre de 2026</p>
         <p class="contador">1 de 9</p>
       </div></div>
       <!-- Hola, soy Rubén. Os voy a enseñar GymProFit, una app para entrenar, comer bien y ver tu progreso. Empezó como mi TFG de DAM y la he seguido llevando como un producto de verdad. Primero la veréis funcionar y luego os cuento lo que no se ve. (15 s) -->
@@ -48,7 +40,7 @@
 
     <section class="slide" id="escena-2" aria-label="Commits antes y después del TFG">
       <div class="escena"><div class="lienzo">
-        <h2 class="titular t-commits"><span class="linea"><span>Tras entregar el TFG, hice</span></span> <span class="linea"><span>seis veces más commits que</span></span> <span class="linea"><span>mientras lo hacía</span></span></h2>
+        <h2 class="titular t-commits"><span class="linea"><span>Tras entregar el TFG, hice seis veces</span></span> <span class="linea"><span>más commits que mientras lo hacía</span></span></h2>
         <div class="grafico" role="img" aria-label="Commits por mes: febrero 6, marzo 19, abril 25, mayo 53, junio 0, julio 168, agosto 0, septiembre 276, octubre 201 hasta el día 14">
           <div class="grupo grupo-tfg"><span class="cifra total">103</span><span class="etiqueta">durante el TFG</span></div>
           <div class="grupo grupo-despues"><span class="cifra total">645</span><span class="etiqueta">después</span></div>
@@ -72,35 +64,35 @@
 
     <section class="slide" id="escena-3" aria-label="El alta">
       <div class="escena"><div class="lienzo">
-        <h2 class="titular t-alta"><span class="linea"><span>En un minuto tienes</span></span> <span class="linea"><span>tu programa y tus</span></span> <span class="linea"><span>calorías del día</span></span></h2>
-        <p class="texto apoyo a-alta">Es la app real, versión 1.6.8.</p>
-        <p class="margen">demo en vivo</p>
+        <h2 class="titular t-alta atenuable"><span class="linea"><span>En un minuto tienes</span></span> <span class="linea"><span>tu programa y tus</span></span> <span class="linea"><span>calorías del día</span></span></h2>
+        <p class="texto apoyo a-alta atenuable">Es la app real.</p>
+        <p class="margen">demo en vivo, APK 1.6.8</p>
         <p class="contador">3 de 9</p>
       </div></div>
-      <!-- La app te pregunta tu objetivo, tu nivel, tus datos, dónde entrenas y cuántos días, y en un minuto te da un programa de entreno y tus calorías y macros del día. Es la misma frase con la que te recibe la app. Mejor que contarlo, os lo enseño. DEMO de 3 min con una cuenta de prueba nueva: el alta y el plan (1 min); empezar la sesión, apuntar una serie y ver el descanso (1 min); buscar un producto y añadirlo con el «+» (1 min). Plan B si falla la red: la toma del alta sigue en pantalla; cuéntalo sobre ella. Refleja el móvil con scrcpy por USB, que no depende del wifi. (220 s) -->
+      <!-- La app te pregunta tu objetivo, tu nivel, tus datos, dónde entrenas y cuántos días, y en un minuto te da un programa de entreno y tus calorías y macros del día. Es la misma frase con la que te recibe la app. Mejor que contarlo, os lo enseño. DEMO de 3 min con una cuenta de prueba nueva: el alta y el plan (1 min); empezar la sesión, apuntar una serie y ver el descanso (1 min); buscar un producto y añadirlo con el «+» (1 min). Plan B si falla la red: la toma del alta sigue en pantalla, y al llegar a «Tu plan» la cámara se acerca; cuéntalo sobre ella. Refleja el móvil con scrcpy por USB, que no depende del wifi. (220 s) -->
     </section>
 
     <section class="slide" id="escena-4" aria-label="Las cuatro piezas">
       <div class="escena"><div class="lienzo">
         <h2 class="titular t-piezas"><span class="linea"><span>Detrás del móvil hay cuatro</span></span> <span class="linea"><span>piezas en producción</span></span></h2>
         <svg class="trazos" viewBox="0 0 1920 1080" aria-hidden="true">
-          <path class="trazo" d="M 440 600 C 580 600, 640 600, 760 600" />
-          <path class="trazo" d="M 1050 560 C 1180 520, 1200 410, 1320 400" />
-          <path class="trazo" d="M 1050 640 C 1250 640, 1180 760, 1320 760" />
+          <path class="trazo" d="M 420 560 C 560 560, 620 520, 750 520" />
+          <path class="trazo" d="M 1230 450 C 1130 450, 1100 505, 1010 510" />
+          <path class="trazo" d="M 880 690 L 880 790" />
         </svg>
-        <p class="pieza pieza-app"><span class="pieza-nombre">App</span><span class="etiqueta">Android</span></p>
-        <p class="pieza pieza-api"><span class="pieza-nombre">API</span><span class="etiqueta">api.gymprofit.app</span><span class="etiqueta">en Render, datos en</span><span class="etiqueta">MySQL (Aiven)</span></p>
-        <p class="pieza pieza-panel"><span class="pieza-nombre">Panel</span><span class="etiqueta">catálogo y usuarios</span><span class="etiqueta">en Cloudflare</span></p>
-        <p class="pieza pieza-web"><span class="pieza-nombre">Web</span><span class="etiqueta">privacidad y términos</span><span class="etiqueta">en Cloudflare</span></p>
-        <p class="margen">foto: Kobe Kian Clata, Unsplash</p>
+        <p class="pieza pieza-api"><span class="pieza-nombre">API</span><span class="etiqueta">en Render</span></p>
+        <p class="pieza pieza-bd"><span class="pieza-nombre">Base de datos</span><span class="etiqueta">MySQL en Aiven</span></p>
+        <p class="pieza pieza-panel"><span class="pieza-nombre">Panel</span><span class="etiqueta">en Cloudflare</span></p>
+        <p class="pieza pieza-web"><span class="pieza-nombre">Web</span><span class="etiqueta">estática, en Cloudflare Pages</span></p>
+        <p class="margen">api.gymprofit.app</p>
         <p class="contador">4 de 9</p>
       </div></div>
-      <!-- Lo que habéis visto es solo una de las cuatro piezas. La app habla con una API en api.gymprofit.app, que guarda los datos en una base de datos MySQL. Hay un panel para gestionar el catálogo y los usuarios, y una web con la privacidad y los términos. En el TFG todo vivía en dos servidores EC2 de AWS; hoy la API está en Render, la base de datos en Aiven y el panel y la web en Cloudflare. La API cabe en 512 MB: cuando empezó a caerse por memoria, medí cada parte y el pico bajó de 501 a 438 MB. (50 s) -->
+      <!-- Lo que habéis visto es solo la app. Detrás hay cuatro piezas. La app habla con una API en api.gymprofit.app, que guarda los datos en una base de datos MySQL. Hay un panel para gestionar el catálogo y los usuarios, que también habla con la API, y una web estática con la privacidad y los términos. En el TFG todo vivía en dos servidores EC2 de AWS; hoy la API está en Render, la base de datos en Aiven y el panel y la web en Cloudflare. La API cabe en 512 MB: cuando empezó a caerse por memoria, medí cada parte y el pico bajó de 501 a 438 MB. (50 s) -->
     </section>
 
     <section class="slide" id="escena-5" aria-label="La serie sobrevive">
       <div class="escena"><div class="lienzo">
-        <h2 class="titular t-sesion"><span class="linea"><span>Aunque Android cierre</span></span> <span class="linea"><span>la app, no se pierde</span></span> <span class="linea"><span>ni una serie</span></span></h2>
+        <h2 class="titular t-sesion atenuable"><span class="linea"><span>Aunque Android cierre</span></span> <span class="linea"><span>la app, no se pierde</span></span> <span class="linea"><span>ni una serie</span></span></h2>
         <ol class="rotulos">
           <li class="rotulo" data-desde="5.2">Serie apuntada</li>
           <li class="rotulo" data-desde="10.6">Android cierra la app</li>
@@ -116,12 +108,12 @@
       <div class="escena"><div class="lienzo">
         <h2 class="titular t-alimentos"><span class="linea"><span>Buscar un alimento ya</span></span> <span class="linea"><span>no depende de nadie</span></span></h2>
         <p class="cifra cifra-198" data-cuenta="198000">198.000</p>
-        <p class="texto a-198">productos en un índice propio</p>
-        <p class="texto fuentes">de Open Food Facts y alimentos básicos</p>
-        <p class="margen">foto: Davey Gravy, Unsplash</p>
+        <p class="texto a-198">productos de Open Food Facts<br>en un índice propio</p>
+        <p class="texto fuentes">y cientos de alimentos básicos<br>de Ciqual y USDA</p>
+        <p class="margen">se actualiza cada semana</p>
         <p class="contador">6 de 9</p>
       </div></div>
-      <!-- Al principio, cada letra que escribías se consultaba a Open Food Facts, una base de datos abierta. Solo deja 10 búsquedas por minuto por dirección, y todos los usuarios salían por la misma: con pocos a la vez, la búsqueda se caía para todos. Ahora la API tiene su propio índice en memoria con 198.000 productos de España y cientos de alimentos básicos. En las pruebas en local responde en 24 milisegundos, y se actualiza sola cada semana. (55 s) -->
+      <!-- Al principio, cada letra que escribías se consultaba a Open Food Facts, una base de datos abierta. Solo deja 10 búsquedas por minuto por dirección, y todos los usuarios salían por la misma: con pocos a la vez, la búsqueda se caía para todos. Ahora la API tiene su propio índice en memoria con 198.000 productos de Open Food Facts de España, y aparte cientos de alimentos básicos de Ciqual y USDA. En las pruebas en local responde en 24 milisegundos, y se actualiza solo cada semana. (55 s) -->
     </section>
 
     <section class="slide" id="escena-7" aria-label="403">

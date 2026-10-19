@@ -5,7 +5,7 @@ import './estilos.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { crearEstudio } from './movil.js';
+import { crearEstudio, CUERPO, PANTALLA } from './movil.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,21 +14,26 @@ const escenas = [...document.querySelectorAll('.slide')];
 const fondos = [...document.querySelectorAll('.fondo')];
 const numero = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
 
+/** Valores por defecto de la pose: foco naranja encendido, sombra, estudio iluminado, cámara quieta. */
+const BASE = { rz: 0, luz: 1, oro: 0, sombra: 1, ambiente: 1, barrido: 0, cam: 0 };
 /**
  * Pose del móvil en el reposo de cada escena, en píxeles del lienzo de 1920x1080.
- * h = alto del móvil; ry/rx = giro; luz = foco naranja; visible = 0 lo saca de escena.
+ * En reposo siempre de cara (giro pequeño) para que la toma se lea; fuera de cuadro cuando no toca.
  */
 const POSES = [
-  { x: 960, y: 545, h: 780, ry: -0.32, rx: 0.06, rz: 0, luz: 1, visible: 1 },     // 1 portada, dentro de la palabra
-  { x: 1620, y: 600, h: 560, ry: -0.62, rx: 0.04, rz: 0.04, luz: 0.7, visible: 1 }, // 2 se aparta
-  { x: 1420, y: 525, h: 860, ry: -0.2, rx: 0.02, rz: 0, luz: 1, visible: 1 },       // 3 alta, grande
-  { x: 310, y: 600, h: 400, ry: 0.42, rx: 0.04, rz: 0, luz: 0.6, visible: 1 },      // 4 se encoge a un lado
-  { x: 520, y: 525, h: 860, ry: 0.22, rx: 0.02, rz: 0, luz: 1, visible: 1 },        // 5 sesión
-  { x: 1550, y: 520, h: 800, ry: -0.24, rx: 0.02, rz: 0, luz: 0, visible: 1 },      // 6 alimentos, sobre naranja
-  { x: 1500, y: 1500, h: 860, ry: -0.6, rx: 0.3, rz: 0, luz: 0, visible: 0 },       // 7 sin móvil
-  { x: 520, y: 1500, h: 860, ry: 0.6, rx: 0.3, rz: 0, luz: 0, visible: 0 },         // 8 sin móvil
-  { x: 470, y: 525, h: 860, ry: 0.18, rx: 0.02, rz: 0, luz: 1, visible: 1 },        // 9 cierre con los récords
-];
+  { x: 960, y: 760, h: 520, ry: -0.12, rx: 0.04 },               // 1 delante de la palabra, tapando su parte baja
+  { x: 2550, y: 620, h: 600, ry: -0.3, rx: 0.04 },               // 2 fuera de cuadro: el gráfico manda
+  { x: 1420, y: 525, h: 860, ry: -0.12, rx: 0.02 },              // 3 alta
+  { x: 300, y: 560, h: 420, ry: 0.14, rx: 0.03, luz: 0.6 },      // 4 se encoge a un lado
+  { x: 1240, y: 990, h: 1450, ry: -0.1, rx: 0.02 },              // 5 grande, cortado por abajo
+  { x: 1550, y: 540, h: 820, ry: -0.14, rx: 0.02, luz: 0 },      // 6 sobre el naranja
+  { x: 1550, y: 1950, h: 820, ry: -0.2, rx: 0.2, luz: 0, sombra: 0 }, // 7 fuera de cuadro
+  { x: 470, y: 1950, h: 860, ry: 0.2, rx: 0.2, luz: 0, sombra: 0 },   // 8 fuera de cuadro
+  { x: 470, y: 525, h: 860, ry: 0.12, rx: 0.02, oro: 1 },        // 9 cierre: la luz pasa a dorado
+].map((p) => ({ ...BASE, ...p }));
+
+/** Vueltas completas en cada transición (i → i+1): el móvil gira de verdad y enseña canto y espalda. */
+const VUELTAS = [1, -1, 1, -1, 1, 0, 0, -1];
 
 /** Qué muestra la pantalla en cada escena: vídeo (se reproduce solo en su escena) o fotograma fijo. */
 const PANTALLAS = [
@@ -43,6 +48,16 @@ const PANTALLAS = [
   { video: 'video/records.mp4', imagen: 'video/records.webp', bucle: false },
 ];
 
+/**
+ * Primeros planos sincronizados con el vídeo: entre `desde` y `hasta` (s) la cámara se acerca al punto
+ * (ux, uy) de la pantalla (0..1 desde arriba a la izquierda), que queda en (x, y) con el móvil a alto h.
+ */
+const CERCA = {
+  2: { desde: 21.6, hasta: 27.5, ux: 0.5, uy: 0.3, x: 1340, y: 560, h: 2100 },  // «Tu plan» y el anillo de calorías
+  4: { desde: 12.9, hasta: 17.7, ux: 0.5, uy: 0.36, x: 1300, y: 560, h: 2300 }, // las series al volver la app
+  5: { desde: 16.9, hasta: 21.6, ux: 0.5, uy: 0.33, x: 1600, y: 560, h: 1900 }, // el anillo de 734 a 1.033
+};
+
 // ---------- Estudio 3D y pantallas ----------
 const estudio = crearEstudio(document.getElementById('estudio'));
 const imagenes = new Map();
@@ -56,6 +71,7 @@ const medios = PANTALLAS.map((p) => {
     m.video = v;
     m.textura = estudio.textura(v);
   }
+  m.pantalla = m.video ? m.textura : m.imagen;
   return m;
 });
 
@@ -65,30 +81,97 @@ function medir() {
   vh = window.innerHeight;
   tops = escenas.map((s) => s.offsetTop);
   reposos = escenas.map((s, i) => tops[i] + s.offsetHeight - vh);
-  // El móvil llega a su pose a mitad del recorrido de la escena (o al empezarla, si no hay recorrido).
-  llegadas = escenas.map((s, i) => tops[i] + (reposos[i] - tops[i]) * 0.5);
+  // El móvil llega a su pose casi al final del recorrido de la escena, para que el giro dure (o al empezarla, si no hay recorrido).
+  llegadas = escenas.map((s, i) => tops[i] + (reposos[i] - tops[i]) * 0.85);
 }
 
 const suave = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+const tramo = (t) => Math.min(1, Math.max(0, t));
 const mezcla = (a, b, t) => Object.fromEntries(Object.keys(a).map((k) => [k, a[k] + (b[k] - a[k]) * t]));
 
-/** Pose del móvil para una posición de scroll: interpola entre el reposo de una escena y la llegada a la siguiente. */
+/**
+ * Pose del móvil para una posición de scroll. Entre el reposo de una escena y la llegada a la siguiente
+ * interpola, da las vueltas de VUELTAS, inclina el móvil y acerca la cámara a mitad de camino.
+ * @returns {{ pose: object, reposo: number, hacia: number }} reposo = escena en reposo o -1; hacia = escena cuya pantalla toca
+ */
 function poseEn(y) {
-  if (y <= reposos[0]) return POSES[0];
+  if (y <= reposos[0]) return { pose: { ...POSES[0] }, reposo: 0, hacia: 0 };
   for (let i = 0; i < escenas.length - 1; i++) {
-    if (y < llegadas[i + 1]) {
-      if (y <= reposos[i]) return POSES[i];
-      return mezcla(POSES[i], POSES[i + 1], suave((y - reposos[i]) / (llegadas[i + 1] - reposos[i])));
-    }
+    if (y >= llegadas[i + 1]) continue;
+    if (y <= reposos[i]) return { pose: { ...POSES[i] }, reposo: i, hacia: i };
+    // Posición con curva suave; el giro, lineal con el scroll, para que la vuelta se reparta en todo el tramo.
+    const lin = (y - reposos[i]) / (llegadas[i + 1] - reposos[i]);
+    const e = suave(lin);
+    const p = mezcla(POSES[i], POSES[i + 1], e);
+    const arco = Math.sin(Math.PI * lin);
+    p.ry += VUELTAS[i] * 2 * Math.PI * lin;
+    p.rx += arco * 0.3;
+    p.rz += arco * 0.08 * VUELTAS[i];
+    p.cam -= arco * 1.6;
+    p.barrido = arco * (VUELTAS[i] || 1);
+    return { pose: p, reposo: -1, hacia: e < 0.5 ? i : i + 1 };
   }
-  return POSES[escenas.length - 1];
+  const n = escenas.length - 1;
+  return { pose: { ...POSES[n] }, reposo: n, hacia: n };
 }
+
+const fueraDeCuadro = (p) => {
+  const medioAncho = (p.h * CUERPO.w) / CUERPO.h / 2;
+  return p.x + medioAncho < -40 || p.x - medioAncho > 1960 || p.y - p.h / 2 > 1120 || p.y + p.h / 2 < -40;
+};
+const deEspaldas = (p) => Math.cos(p.ry) * Math.cos(p.rx) < -0.1;
 
 /** Escena a la vista: la que ocupa el centro de la pantalla. */
 function escenaEn(y) {
   let n = 0;
   for (let i = 0; i < escenas.length; i++) if (tops[i] <= y + vh / 2) n = i;
   return n;
+}
+
+// ---------- Momento destacado: el móvil sale de la oscuridad con la primera tecla o scroll ----------
+const entrada = { t: reducido ? 1 : 0, lanzada: reducido };
+let lenis = null;
+function lanzarEntrada() {
+  if (entrada.lanzada) return;
+  entrada.lanzada = true;
+  gsap.to(entrada, { t: 1, duration: 2.8, ease: 'power2.inOut', onComplete: () => { lenis?.start(); irA(0, true); } });
+}
+function completarEntrada() {
+  gsap.killTweensOf(entrada);
+  entrada.t = 1; entrada.lanzada = true;
+  lenis?.start();
+}
+/** En la portada, antes de la entrada: de espaldas, abajo, a oscuras; el foco barre el canto al girar. */
+function conEntrada(p) {
+  const e = entrada.t;
+  if (e >= 1) return p;
+  return {
+    ...p,
+    ry: p.ry + Math.PI * (1 - e),
+    y: p.y + 560 * (1 - e),
+    h: p.h * (0.85 + 0.15 * e),
+    ambiente: 0.02 + 0.98 * e,
+    luz: Math.min(1.4, e + Math.sin(Math.PI * e) * 0.9),
+    barrido: -1 + 2 * e,
+    sombra: e,
+  };
+}
+
+// ---------- Primeros planos ----------
+function conPrimerPlano(p, i) {
+  const cfg = CERCA[i], v = medios[i].video;
+  if (!cfg || !v || reducido) return { pose: p, c: 0 };
+  const t = v.currentTime;
+  const c = suave(tramo((t - cfg.desde) / 0.9)) * (1 - suave(tramo((t - cfg.hasta) / 0.9)));
+  if (c <= 0) return { pose: p, c: 0 };
+  // Centro del móvil para que el punto (ux, uy) de la pantalla caiga en (x, y) con el móvil a alto h.
+  const pxPorUnidad = cfg.h / CUERPO.h;
+  const cerca = {
+    ...p, h: cfg.h, ry: 0, rx: 0, rz: 0, sombra: 0, luz: p.luz * 0.4,
+    x: cfg.x - (cfg.ux - 0.5) * PANTALLA.w * pxPorUnidad,
+    y: cfg.y + (0.5 - cfg.uy) * PANTALLA.h * pxPorUnidad,
+  };
+  return { pose: mezcla(p, cerca, c), c };
 }
 
 // ---------- Fondos (capa por detrás del móvil) ----------
@@ -104,7 +187,7 @@ function moverFondos() {
   }
 }
 
-// ---------- Escena actual: vídeo, pantalla, rótulos y .active ----------
+// ---------- Escena actual: vídeo, .active y rótulos ----------
 let actual = -1;
 let activaPropia = 0;
 function cambiarEscena(n) {
@@ -114,8 +197,6 @@ function cambiarEscena(n) {
     if (!m.video) return;
     if (i === n) { m.video.currentTime = 0; m.video.play().catch(() => {}); } else m.video.pause();
   });
-  const m = medios[n];
-  estudio.setPantalla(m.video ? m.textura : m.imagen);
   activaPropia = n;
   escenas.forEach((s, i) => s.classList.toggle('active', i === n));
 }
@@ -130,21 +211,33 @@ function sincronizarRotulos() {
   rotulos.forEach((r, i) => r.classList.toggle('ahora', i === ultimo));
 }
 
+let pantallaPuesta = false;
 function fotograma() {
   const y = window.scrollY;
-  estudio.setPose(poseEn(y));
   cambiarEscena(escenaEn(y));
+  let { pose, reposo, hacia } = poseEn(y);
+  if (reposo === 0) pose = conEntrada(pose);
+  let c = 0;
+  if (reposo >= 0) ({ pose, c } = conPrimerPlano(pose, reposo));
+  escenas.forEach((s, i) => s.style.setProperty('--atenua', i === reposo ? c : 0));
+
+  // La pantalla solo cambia cuando no se ve: fuera de cuadro, de espaldas o en un salto directo al reposo.
+  if (!pantallaPuesta || reposo >= 0 || fueraDeCuadro(pose) || deEspaldas(pose)) {
+    estudio.setPantalla(medios[hacia].pantalla);
+    pantallaPuesta = true;
+  }
+  estudio.setPose(pose);
   moverFondos();
   sincronizarRotulos();
   estudio.render();
 }
 
 // ---------- Scroll suave y líneas de tiempo ----------
-let lenis = null;
 function irA(n, inmediato = false) {
   const i = Math.max(0, Math.min(escenas.length - 1, n));
-  if (lenis && !inmediato) lenis.scrollTo(reposos[i], { duration: 1.2, easing: suave });
-  else { lenis?.scrollTo(reposos[i], { immediate: true }); window.scrollTo(0, reposos[i]); }
+  // 3 s con una curva sinusoidal: da tiempo a ver el giro y el canto del móvil entre escenas.
+  if (lenis && !inmediato) lenis.scrollTo(reposos[i], { duration: 3, easing: (t) => (1 - Math.cos(Math.PI * t)) / 2 });
+  else { lenis?.scrollTo(reposos[i], { immediate: true, force: true }); window.scrollTo(0, reposos[i]); }
 }
 
 /** Animación de entrada de cada escena, guiada por el scroll (scrub) y terminada antes del reposo. */
@@ -153,8 +246,7 @@ function lineasDeTiempo() {
     defaults: { ease: 'power3.out' },
     scrollTrigger: { trigger: escenas[i], start: 'top top', end: 'bottom bottom', scrub: true },
   });
-  const lineas = (sel) => ({ yPercent: 105, stagger: 0.08, duration: 0.35, targets: sel });
-  const subir = (t, sel, at = 0) => { const l = lineas(sel); t.from(l.targets, { yPercent: l.yPercent, stagger: l.stagger, duration: l.duration }, at); };
+  const subir = (t, sel, at = 0) => t.from(sel, { yPercent: 105, stagger: 0.08, duration: 0.35 }, at);
   const contar = (t, el, at, dur = 0.4) => {
     const fin = Number(el.dataset.cuenta), o = { v: 0 };
     el.style.minWidth = `${el.offsetWidth}px`; // ancho final reservado
@@ -173,20 +265,19 @@ function lineasDeTiempo() {
   // 3. Alta.
   t = tl(2);
   subir(t, '#escena-3 .linea > span');
-  t.from('#escena-3 .apoyo', { opacity: 0, y: 20, duration: 0.2 }, 0.3);
   relleno(t);
 
-  // 4. Piezas: del móvil sale el trazo a la API y de la API a las demás.
+  // 4. Piezas: trazos del móvil a la API, del panel a la API y de la API a la base de datos.
   t = tl(3);
   subir(t, '#escena-4 .linea > span');
   document.querySelectorAll('#escena-4 .trazo').forEach((p, i) => {
     const largo = p.getTotalLength();
     gsap.set(p, { strokeDasharray: largo });
-    t.fromTo(p, { strokeDashoffset: largo }, { strokeDashoffset: 0, duration: 0.25, ease: 'none' }, 0.2 + (i ? 0.35 : 0) + i * 0.05);
+    t.fromTo(p, { strokeDashoffset: largo }, { strokeDashoffset: 0, duration: 0.2, ease: 'none' }, [0.2, 0.55, 0.45][i]);
   });
-  t.from('#escena-4 .pieza-app', { opacity: 0, duration: 0.15 }, 0.1);
-  t.from('#escena-4 .pieza-api', { opacity: 0, y: 30, duration: 0.2 }, 0.4);
-  t.from('#escena-4 .pieza-panel, #escena-4 .pieza-web', { opacity: 0, y: 30, stagger: 0.08, duration: 0.2 }, 0.6);
+  t.from('#escena-4 .pieza-api', { opacity: 0, y: 30, duration: 0.2 }, 0.3);
+  t.from('#escena-4 .pieza-bd', { opacity: 0, y: 30, duration: 0.2 }, 0.55);
+  t.from('#escena-4 .pieza-panel, #escena-4 .pieza-web', { opacity: 0, y: 30, stagger: 0.1, duration: 0.2 }, 0.6);
   relleno(t);
 
   // 5. Sesión (los rótulos van con el vídeo).
@@ -225,25 +316,31 @@ function lineasDeTiempo() {
 }
 
 // ---------- Teclado: escena siguiente y anterior ----------
+const TECLAS_SIG = [' ', 'ArrowRight', 'ArrowDown', 'PageDown'];
+const TECLAS_ANT = ['ArrowLeft', 'ArrowUp', 'PageUp'];
 window.addEventListener('keydown', (e) => {
-  const sig = [' ', 'ArrowRight', 'ArrowDown', 'PageDown'].includes(e.key);
-  const ant = ['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key);
+  const sig = TECLAS_SIG.includes(e.key), ant = TECLAS_ANT.includes(e.key);
   if (!sig && !ant && e.key !== 'Home' && e.key !== 'End') return;
   e.preventDefault();
+  // La primera tecla lanza la entrada de la portada; la navegación empieza cuando termina.
+  if (!entrada.lanzada) return lanzarEntrada();
+  if (entrada.t < 1) return;
   const y = window.scrollY;
-  // Desde el reposo de la escena actual va a la siguiente; a medio camino, completa la actual.
   const n = escenaEn(y);
   if (e.key === 'Home') return irA(0);
   if (e.key === 'End') return irA(escenas.length - 1);
+  // Desde el reposo de la escena actual va a la siguiente; a medio camino, completa la actual.
   if (sig) irA(y < reposos[n] - 4 ? n : n + 1);
   else irA(y > reposos[n] + 4 ? n : n - 1);
 });
+for (const ev of ['wheel', 'touchstart']) window.addEventListener(ev, lanzarEntrada, { passive: true });
 
 // ---------- .active desde fuera: ir al estado final de esa escena ----------
 new MutationObserver(() => {
   const i = escenas.findIndex((s) => s.classList.contains('active'));
   if (i < 0 || i === activaPropia) return;
   activaPropia = i;
+  completarEntrada();
   irA(i, true);
   ScrollTrigger.update();
   fotograma();
@@ -252,6 +349,7 @@ new MutationObserver(() => {
 // ---------- Arranque ----------
 async function arrancar() {
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
   await document.fonts.ready;
   medir();
   if (!reducido) {
@@ -259,9 +357,17 @@ async function arrancar() {
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
+    if (!entrada.lanzada) lenis.stop();
     lineasDeTiempo();
   }
-  window.addEventListener('resize', () => { medir(); ScrollTrigger.refresh(); });
+  // Al cambiar el tamaño (F11, ventana) las escenas cambian de alto: se vuelve al reposo de la escena actual.
+  window.addEventListener('resize', () => {
+    const n = Math.max(0, actual);
+    medir();
+    lenis?.resize();
+    ScrollTrigger.refresh();
+    irA(n, true);
+  });
   ScrollTrigger.refresh();
   await estudio.listo.catch(() => {});
   gsap.ticker.add(fotograma);

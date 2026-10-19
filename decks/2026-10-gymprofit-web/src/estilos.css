@@ -31,9 +31,6 @@ body {
   overflow-x: hidden;
 }
 img { display: block; }
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
-}
 
 /* ---------- Capas ---------- */
 #fondos { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
@@ -56,6 +53,8 @@ img { display: block; }
   transform: translate(-50%, -50%);
 }
 .lienzo > * { position: absolute; }
+/* Lo que se aparta cuando la cámara se acerca a la pantalla del móvil (--atenua lo pone el script). */
+.atenuable, .contador { opacity: calc(1 - var(--atenua, 0)); }
 
 /* ---------- Tipografía ---------- */
 .titular {
@@ -67,7 +66,7 @@ img { display: block; }
 .linea > span { display: block; }
 .texto { font-size: calc(60 * var(--u)); line-height: 1.15; color: var(--hueso); }
 .apoyo { color: var(--niebla); }
-.etiqueta, .credito, .contador, .margen {
+.etiqueta, .contador, .margen {
   font-family: var(--f-texto); font-weight: 600;
   font-size: calc(48 * var(--u)); line-height: 1.1; color: var(--niebla);
 }
@@ -76,40 +75,33 @@ img { display: block; }
   font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
 }
 .gigante {
+  position: absolute; left: 50%; top: calc(290 * var(--u)); transform: translateX(-50%);
   font-family: var(--f-cond); font-weight: 900; line-height: 0.8;
   font-size: calc(430 * var(--u)); letter-spacing: -0.02em; color: var(--hueso); white-space: nowrap;
 }
 
-/* Marco común: contador de escena y etiqueta vertical de margen. */
+/* Marco común: contador de escena y etiqueta vertical de margen con el dato real de la escena. */
 .contador { right: var(--margen-x); bottom: calc(72 * var(--u)); font-variant-numeric: tabular-nums; }
 .margen {
   left: calc(48 * var(--u)); top: 50%;
   writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg); white-space: nowrap;
 }
-.credito { left: var(--margen-x); bottom: calc(72 * var(--u)); }
 
-/* ---------- 1. Portada: el móvil dentro de la palabra ---------- */
-.gigante-detras, .gigante-delante {
-  left: 50%; top: calc(290 * var(--u)); transform: translateX(-50%);
-}
-.portada { position: absolute; inset: 0; font-weight: inherit; }
-.portada > .gigante-delante { position: absolute; }
-/* La copia de delante solo dibuja la parte baja de las letras: el móvil queda dentro de la palabra. */
-.gigante-delante { clip-path: inset(46% -5% -40% -5%); }
+/* ---------- 1. Portada: la palabra entera detrás y el móvil delante ---------- */
 .portada-sub {
-  position: absolute; left: var(--margen-x); bottom: var(--margen-y); width: calc(700 * var(--u));
+  left: var(--margen-x); bottom: var(--margen-y); width: calc(640 * var(--u));
   font-family: var(--f-texto); font-weight: 500; font-size: calc(64 * var(--u)); line-height: 1.12; color: var(--hueso);
 }
 
 /* ---------- 2. Commits ---------- */
-.t-commits { left: var(--margen-x); top: var(--margen-y); width: calc(1300 * var(--u)); font-size: calc(96 * var(--u)); }
-.grafico { left: var(--margen-x); top: calc(410 * var(--u)); width: calc(1240 * var(--u)); height: calc(600 * var(--u)); }
+.t-commits { left: var(--margen-x); top: var(--margen-y); width: calc(1632 * var(--u)); font-size: calc(96 * var(--u)); }
+.grafico { left: var(--margen-x); top: calc(380 * var(--u)); width: calc(1440 * var(--u)); height: calc(560 * var(--u)); }
 .barras {
-  position: absolute; left: 0; right: 0; bottom: calc(70 * var(--u)); height: calc(300 * var(--u));
-  display: grid; grid-template-columns: repeat(9, 1fr); gap: calc(24 * var(--u)); align-items: end;
+  position: absolute; left: 0; right: 0; bottom: calc(70 * var(--u)); height: calc(270 * var(--u));
+  display: grid; grid-template-columns: repeat(9, 1fr); gap: calc(32 * var(--u)); align-items: end;
 }
 .barra {
-  position: relative; height: calc(var(--v) / 276 * 300 * var(--u));
+  position: relative; height: calc(var(--v) / 276 * 270 * var(--u));
   min-height: calc(4 * var(--u)); transform-origin: bottom; background: var(--naranja);
 }
 .barra.tfg { background: var(--niebla); }
@@ -122,36 +114,32 @@ img { display: block; }
 .barra.tfg .valor, .barra.cero .valor { color: var(--niebla); }
 .barra .mes { top: calc(100% + 12 * var(--u)); color: var(--niebla); }
 .grupo { position: absolute; top: 0; display: flex; align-items: baseline; gap: calc(20 * var(--u)); }
-.grupo .total { font-size: calc(150 * var(--u)); }
+.grupo .total { font-size: calc(160 * var(--u)); }
 .grupo-tfg { left: 0; }
 .grupo-tfg .total { color: var(--niebla); }
-.grupo-despues { left: calc(5 * (1240 + 24) / 9 * var(--u)); }
+.grupo-despues { left: calc(5 * (1440 + 32) / 9 * var(--u)); }
 .grupo-despues .total { color: var(--naranja); }
 
 /* ---------- 3. Alta ---------- */
 .t-alta { left: var(--margen-x); top: calc(250 * var(--u)); width: calc(1000 * var(--u)); font-size: calc(120 * var(--u)); }
 .a-alta { left: var(--margen-x); top: calc(660 * var(--u)); width: calc(900 * var(--u)); }
 
-/* ---------- 4. Piezas ---------- */
+/* ---------- 4. Piezas: el móvil y, detrás, API, base de datos, panel y web ---------- */
 .t-piezas { left: var(--margen-x); top: var(--margen-y); width: calc(1500 * var(--u)); }
 .trazos { left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
 .trazo { fill: none; stroke: var(--naranja); stroke-width: 4; stroke-linecap: round; }
 .pieza { display: flex; flex-direction: column; gap: calc(6 * var(--u)); }
 .pieza-nombre { font-family: var(--f-cond); font-weight: 800; font-size: calc(96 * var(--u)); line-height: 0.95; color: var(--hueso); }
-.pieza-app { left: calc(200 * var(--u)); top: calc(815 * var(--u)); }
-.pieza-api { left: calc(780 * var(--u)); top: calc(500 * var(--u)); width: calc(480 * var(--u)); }
+.pieza-api { left: calc(760 * var(--u)); top: calc(410 * var(--u)); }
 .pieza-api .pieza-nombre { font-size: calc(200 * var(--u)); color: var(--naranja); }
-.pieza-panel { left: calc(1340 * var(--u)); top: calc(330 * var(--u)); width: calc(520 * var(--u)); }
-.pieza-web { left: calc(1340 * var(--u)); top: calc(680 * var(--u)); width: calc(520 * var(--u)); }
-.foto { position: absolute; border-radius: 4px; }
-.foto-rack {
-  right: calc(-80 * var(--u)); top: calc(120 * var(--u)); width: calc(900 * var(--u)); height: calc(860 * var(--u));
-  object-fit: cover; opacity: 0.22; filter: blur(calc(6 * var(--u))) saturate(0.7);
-}
+.pieza-bd { left: calc(760 * var(--u)); top: calc(800 * var(--u)); }
+.pieza-bd .pieza-nombre { font-size: calc(80 * var(--u)); }
+.pieza-panel { left: calc(1250 * var(--u)); top: calc(390 * var(--u)); }
+.pieza-web { left: calc(1250 * var(--u)); top: calc(700 * var(--u)); }
 
-/* ---------- 5. Sesión ---------- */
-.t-sesion { left: calc(860 * var(--u)); top: calc(150 * var(--u)); width: calc(960 * var(--u)); }
-.rotulos { left: calc(860 * var(--u)); top: calc(560 * var(--u)); list-style: none; display: grid; gap: calc(18 * var(--u)); }
+/* ---------- 5. Sesión: el móvil grande, cortado por abajo ---------- */
+.t-sesion { left: var(--margen-x); top: var(--margen-y); width: calc(900 * var(--u)); }
+.rotulos { left: var(--margen-x); top: calc(470 * var(--u)); list-style: none; display: grid; gap: calc(18 * var(--u)); }
 .rotulo {
   font-family: var(--f-texto); font-weight: 600; font-size: calc(64 * var(--u)); line-height: 1.1;
   color: var(--niebla); opacity: 0; transform: translateY(calc(24 * var(--u)));
@@ -160,22 +148,15 @@ img { display: block; }
 .rotulo.visto { opacity: 1; transform: none; }
 .rotulo.ahora { color: var(--hueso); }
 .rotulo-final { font-family: var(--f-cond); font-style: italic; font-weight: 800; font-size: calc(150 * var(--u)); line-height: 1; }
-.rotulo-final.ahora { color: var(--hueso); }
 
 /* ---------- 6. Alimentos: naranja a sangre ---------- */
 .fondo-naranja { background: var(--naranja); }
-.foto-bol {
-  right: calc(-40 * var(--u)); top: calc(-80 * var(--u)); width: calc(620 * var(--u)); height: calc(560 * var(--u));
-  object-fit: cover; filter: blur(calc(12 * var(--u))) saturate(0.8); opacity: 0.45;
-  -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
-  mask-image: radial-gradient(closest-side, #000 45%, transparent 100%);
-}
-.escena-naranja .titular, .escena-naranja .texto, .escena-naranja .cifra { color: var(--grafito); }
-.escena-naranja .etiqueta, .escena-naranja .credito, .escena-naranja .contador, .escena-naranja .margen { color: var(--grafito); }
+.escena-naranja .titular, .escena-naranja .texto, .escena-naranja .cifra,
+.escena-naranja .etiqueta, .escena-naranja .contador, .escena-naranja .margen { color: var(--grafito); }
 .t-alimentos { left: var(--margen-x); top: var(--margen-y); width: calc(1150 * var(--u)); }
-.cifra-198 { left: calc(132 * var(--u)); top: calc(380 * var(--u)); font-size: calc(300 * var(--u)); }
-.a-198 { left: var(--margen-x); top: calc(670 * var(--u)); width: calc(1100 * var(--u)); }
-.fuentes { left: var(--margen-x); top: calc(760 * var(--u)); width: calc(1100 * var(--u)); }
+.cifra-198 { left: calc(132 * var(--u)); top: calc(330 * var(--u)); font-size: calc(280 * var(--u)); }
+.a-198 { left: var(--margen-x); top: calc(600 * var(--u)); width: calc(1150 * var(--u)); }
+.fuentes { left: var(--margen-x); top: calc(770 * var(--u)); width: calc(1150 * var(--u)); }
 
 /* ---------- 7. 403 ---------- */
 .t-403 { left: var(--margen-x); top: var(--margen-y); width: calc(1632 * var(--u)); }
@@ -205,5 +186,4 @@ img { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .slide { height: 100vh; }
   .rotulo { opacity: 1; transform: none; transition: none; }
-  .rotulo-final { color: var(--hueso); }
 }
